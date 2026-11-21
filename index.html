@@ -94,8 +94,9 @@
         provider = document.getElementById("providerSelect").value;
         localStorage.setItem("vuslat_ai_key", apiKey);
         localStorage.setItem("vuslat_ai_prov", provider);
+        localStorage.removeItem("vuslat_fast_model");
         closeSettings();
-        addMessage("ai", "API anahtarın kaydedildi! Ben Vuslat, bana istediğin soruyu sorabilirsin.");
+        addMessage("ai", "API anahtarın kaydedildi! Türkçe veya İngilizce istediğin her şeyi sorabilirsin.");
     }
 
     function clearChat() {
@@ -114,13 +115,15 @@
         if (!("speechSynthesis" in window)) return;
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = "tr-TR";
+        const isTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(text);
+        utter.lang = isTurkish ? "tr-TR" : "en-US";
+        utter.rate = 1.05;
         window.speechSynthesis.speak(utter);
     }
 
     function addMessage(role, text) {
         chatHistory.push({ role, text });
-        localStorage.setItem("vuslat_ai_chat", JSON.stringify(chatHistory.slice(-40)));
+        localStorage.setItem("vuslat_ai_chat", JSON.stringify(chatHistory.slice(-30)));
         renderChat();
     }
 
@@ -128,7 +131,7 @@
         const box = document.getElementById("chatBox");
         box.innerHTML = "";
         if (chatHistory.length === 0) {
-            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Sağ üstteki <b>⚙️ API Ayarı</b> butonundan ücretsiz Gemini API anahtarını girerek benimle sesli veya yazılı sohbet edebilirsin.</div>`;
+            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Türkçe veya İngilizce konuşabilir, çeviri yaptırabilir ve sesli sohbet edebilirsin.</div>`;
             return;
         }
         chatHistory.forEach(m => {
@@ -147,37 +150,47 @@
         box.scrollTop = box.scrollHeight;
     }
 
-    async function askGeminiAuto(text) {
+    async function askGeminiFast(text) {
         const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
-        const candidates = ["models/gemini-3.8-flash", "models/gemini-3.8-flash-lite", "models/gemini-3.5-flash"];
+        let savedModel = localStorage.getItem("vuslat_fast_model");
 
-        const callModel = async (m) => {
+        const sysPrompt = "Senin adın Vuslat. Türkçe ve İngilizce dillerine ana dili gibi hakim, çok zeki, hızlı ve samimi bir kişisel asistansın. Kullanıcı hangi dilde yazarsa (Türkçe veya İngilizce) o dilde doğrudan, net ve akıcı yanıt ver. Asla iç düşünce notu yazma.";
+
+        // Son 6 mesajı sohbet bağlamı olarak hazırla
+        const recentContents = chatHistory.slice(-6).map(m => ({
+            role: m.role === "user" ? "user" : "model",
+            parts: [{ text: m.text }]
+        }));
+
+        const extractReply = (data) => {
+            const parts = data.candidates?.at(0)?.content?.parts || [];
+            const realPart = parts.find(p => !p.thought && p.text) || parts.at(-1);
+            return realPart?.text || (data.error?.message || "Yanıt alınamadı.");
+        };
+
+        const callModel = async (m, disableThinking = true) => {
             const url = `${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const payload = {
+                systemInstruction: { parts: [{ text: sysPrompt }] },
+                contents: recentContents
+            };
+            if (disableThinking) {
+                payload.generationConfig = { thinkingConfig: { thinkingBudget: 0 }, temperature: 0.7 };
+            }
             return await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    systemInstruction: { parts: [{ text: "Senin adın Vuslat. Samimi, zeki, yardımsever ve Türkçe konuşan kişisel bir yapay zeka asistanısın." }] },
-                    contents: [{ parts: [{ text: text }] }]
-                })
+                body: JSON.stringify(payload)
             });
         };
 
-        // İlk olarak gemini-3.8-flash modelini dene; 503 yoğunluk verirse 1.5 sn bekleyip tekrar dene
-        for (let attempt = 0; attempt < 2; attempt++) {
-            const res = await callModel("models/gemini-3.8-flash");
+        if (savedModel) {
+            let res = await callModel(savedModel, true);
+            if (!res.ok) res = await callModel(savedModel, false);
             const data = await res.json();
-            if (res.ok && data.candidates) {
-                return data.candidates.at(0)?.content?.parts?.at(0)?.text || "Yanıt alınamadı.";
-            }
-            if (res.status === 503) {
-                await new Promise(r => setTimeout(r, 1500));
-            } else {
-                break;
-            }
+            if (res.ok && data.candidates) return extractReply(data);
         }
 
-        // Eğer hala yanıt alınamadıysa aktif modelleri listele (eski 1.5 ve 2.5 hariç)
         const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
         const listData = await listRes.json();
         const activeModels = (listData.models || []).filter(m =>
@@ -186,14 +199,15 @@
         );
 
         for (const m of activeModels) {
-            const res = await callModel(m.name);
+            let res = await callModel(m.name, true);
+            if (!res.ok) res = await callModel(m.name, false);
             const data = await res.json();
             if (res.ok && data.candidates) {
-                return data.candidates.at(0)?.content?.parts?.at(0)?.text || "Yanıt alınamadı.";
+                localStorage.setItem("vuslat_fast_model", m.name);
+                return extractReply(data);
             }
         }
-
-        return "Sunucu şu an çok yoğun, lütfen birkaç saniye sonra tekrar dene.";
+        return "Sunucu şu an yoğun, lütfen tekrar dene.";
     }
 
     async function sendMessage() {
@@ -211,14 +225,14 @@
         const box = document.getElementById("chatBox");
         const loadingDiv = document.createElement("div");
         loadingDiv.className = "msg ai";
-        loadingDiv.innerText = "Vuslat düşünüyor...";
+        loadingDiv.innerText = "⚡...";
         box.appendChild(loadingDiv);
         box.scrollTop = box.scrollHeight;
 
         try {
             let reply = "";
             if (provider === "gemini") {
-                reply = await askGeminiAuto(text);
+                reply = await askGeminiFast(text);
             } else {
                 const url = atob("aHR0cHM6Ly9hcGkub3BlbmFpLmNvbS92MS9jaGF0L2NvbXBsZXRpb25z");
                 const res = await fetch(url, {
@@ -227,8 +241,8 @@
                     body: JSON.stringify({
                         model: "gpt-4o-mini",
                         messages: [
-                            { role: "system", content: "Senin adın Vuslat. Samimi, zeki, yardımsever ve Türkçe konuşan kişisel bir yapay zeka asistanısın." },
-                            { role: "user", content: text }
+                            { role: "system", content: "Senin adın Vuslat. Türkçe ve İngilizce dillerinde çok hızlı ve akıcı yanıt veren kişisel asistansın." },
+                            ...chatHistory.slice(-6).map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text }))
                         ]
                     })
                 });
@@ -239,7 +253,7 @@
             addMessage("ai", reply);
         } catch (e) {
             loadingDiv.remove();
-            addMessage("ai", "Bağlantı hatası oluştu, internetini veya API anahtarını kontrol et.");
+            addMessage("ai", "Bağlantı hatası oluştu, internetini kontrol et.");
         }
     }
 
