@@ -94,7 +94,6 @@
         provider = document.getElementById("providerSelect").value;
         localStorage.setItem("vuslat_ai_key", apiKey);
         localStorage.setItem("vuslat_ai_prov", provider);
-        localStorage.removeItem("vuslat_model_v2");
         closeSettings();
         addMessage("ai", "API anahtarın kaydedildi! Ben Vuslat, bana istediğin soruyu sorabilirsin.");
     }
@@ -150,7 +149,7 @@
 
     async function askGeminiAuto(text) {
         const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
-        let modelName = localStorage.getItem("vuslat_model_v2") || "models/gemini-3.8-flash";
+        const candidates = ["models/gemini-3.8-flash", "models/gemini-3.8-flash-lite", "models/gemini-3.5-flash"];
 
         const callModel = async (m) => {
             const url = `${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`;
@@ -164,24 +163,37 @@
             });
         };
 
-        let res = await callModel(modelName);
-        let data = await res.json();
-
-        if (!res.ok) {
-            const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
-            const listData = await listRes.json();
-            const available = (listData.models || []).find(m =>
-                m.supportedGenerationMethods?.includes("generateContent") && m.name.includes("flash")
-            ) || (listData.models || []).find(m => m.supportedGenerationMethods?.includes("generateContent"));
-
-            if (available) {
-                modelName = available.name;
-                localStorage.setItem("vuslat_model_v2", modelName);
-                res = await callModel(modelName);
-                data = await res.json();
+        // İlk olarak gemini-3.8-flash modelini dene; 503 yoğunluk verirse 1.5 sn bekleyip tekrar dene
+        for (let attempt = 0; attempt < 2; attempt++) {
+            const res = await callModel("models/gemini-3.8-flash");
+            const data = await res.json();
+            if (res.ok && data.candidates) {
+                return data.candidates.at(0)?.content?.parts?.at(0)?.text || "Yanıt alınamadı.";
+            }
+            if (res.status === 503) {
+                await new Promise(r => setTimeout(r, 1500));
+            } else {
+                break;
             }
         }
-        return data.candidates?.at(0)?.content?.parts?.at(0)?.text || (data.error?.message || "Yanıt alınamadı.");
+
+        // Eğer hala yanıt alınamadıysa aktif modelleri listele (eski 1.5 ve 2.5 hariç)
+        const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
+        const listData = await listRes.json();
+        const activeModels = (listData.models || []).filter(m =>
+            m.supportedGenerationMethods?.includes("generateContent") &&
+            !m.name.includes("1.5") && !m.name.includes("2.5") && !m.name.includes("2.0")
+        );
+
+        for (const m of activeModels) {
+            const res = await callModel(m.name);
+            const data = await res.json();
+            if (res.ok && data.candidates) {
+                return data.candidates.at(0)?.content?.parts?.at(0)?.text || "Yanıt alınamadı.";
+            }
+        }
+
+        return "Sunucu şu an çok yoğun, lütfen birkaç saniye sonra tekrar dene.";
     }
 
     async function sendMessage() {
