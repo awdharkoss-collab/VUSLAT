@@ -66,7 +66,7 @@
         <h3>⚙️ Vuslat API Ayarı</h3>
         <p style="font-size:12px; color:#9ca3af; margin-bottom:12px;">Google AI Studio'dan aldığınız ücretsiz Gemini API anahtarını girin (yalnızca cihazınızda saklanır).</p>
         <select id="providerSelect">
-            <option value="gemini">Google Gemini 2.5 Flash (Ücretsiz)</option>
+            <option value="gemini">Google Gemini (Otomatik Güncel Model)</option>
             <option value="openai">OpenAI (GPT-4o-mini)</option>
         </select>
         <input type="password" id="apiKeyInput" placeholder="API Anahtarınızı yapıştırın (AIza... veya sk-...)">
@@ -94,6 +94,7 @@
         provider = document.getElementById("providerSelect").value;
         localStorage.setItem("vuslat_ai_key", apiKey);
         localStorage.setItem("vuslat_ai_prov", provider);
+        localStorage.removeItem("vuslat_model");
         closeSettings();
         addMessage("ai", "API anahtarın kaydedildi! Ben Vuslat, bana istediğin soruyu sorabilirsin.");
     }
@@ -147,6 +148,42 @@
         box.scrollTop = box.scrollHeight;
     }
 
+    async function askGeminiAuto(text) {
+        const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
+        let modelName = localStorage.getItem("vuslat_model") || "models/gemini-3.0-flash";
+
+        const callModel = async (m) => {
+            const url = `${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            return await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    systemInstruction: { parts: [{ text: "Senin adın Vuslat. Samimi, zeki, yardımsever ve Türkçe konuşan kişisel bir yapay zeka asistanısın." }] },
+                    contents: [{ parts: [{ text: text }] }]
+                })
+            });
+        };
+
+        let res = await callModel(modelName);
+        let data = await res.json();
+
+        if (!res.ok) {
+            const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
+            const listData = await listRes.json();
+            const available = (listData.models || []).find(m =>
+                m.supportedGenerationMethods?.includes("generateContent") && m.name.includes("flash")
+            ) || (listData.models || []).find(m => m.supportedGenerationMethods?.includes("generateContent"));
+
+            if (available) {
+                modelName = available.name;
+                localStorage.setItem("vuslat_model", modelName);
+                res = await callModel(modelName);
+                data = await res.json();
+            }
+        }
+        return data.candidates?.at(0)?.content?.parts?.at(0)?.text || (data.error?.message || "Yanıt alınamadı.");
+    }
+
     async function sendMessage() {
         const input = document.getElementById("userInput");
         const text = input.value.trim();
@@ -169,17 +206,7 @@
         try {
             let reply = "";
             if (provider === "gemini") {
-                const url = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhL21vZGVscy9nZW1pbmktMi41LWZsYXNoOmdlbmVyYXRlQ29udGVudD9rZXk9") + encodeURIComponent(apiKey);
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        systemInstruction: { parts: [{ text: "Senin adın Vuslat. Samimi, zeki, yardımsever ve Türkçe konuşan kişisel bir yapay zeka asistanısın." }] },
-                        contents: [{ parts: [{ text: text }] }]
-                    })
-                });
-                const data = await res.json();
-                reply = data.candidates?.at(0)?.content?.parts?.at(0)?.text || (data.error?.message || "Yanıt alınamadı.");
+                reply = await askGeminiAuto(text);
             } else {
                 const url = atob("aHR0cHM6Ly9hcGkub3BlbmFpLmNvbS92MS9jaGF0L2NvbXBsZXRpb25z");
                 const res = await fetch(url, {
