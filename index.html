@@ -74,6 +74,7 @@
 </header>
 
 <div class="chips">
+    <div class="chip" onclick="launchPresetMode('general', '')">🤖 Genel Asistan</div>
     <div class="chip" onclick="launchPresetMode('deep_analyst', '')">📊 Derin Veri & Analiz</div>
     <div class="chip" onclick="triggerDetectiveAnalysis()">🔍 Fotoğrafı Çöz</div>
     <div class="chip" onclick="launchPresetMode('history_char', 'Fatih Sultan Mehmet olarak benimle konuş! İstanbul’un fethini anlat.')">🏛️ Tarihi Karakter</div>
@@ -94,6 +95,7 @@
     </label>
     <button type="button" class="icon-btn" style="background:#7c3aed; border:none; margin-left:auto;" onclick="fetchDailySchedule()">🔍 Günün Programını Getir</button>
 </div>
+
 <div class="chat-box" id="chatBox"></div>
 
 <div class="preview-bar" id="previewBar">
@@ -166,7 +168,7 @@
         <h3 style="margin-bottom:8px;">📚 Akıllı Hafıza & Dokümanlar (RAG)</h3>
         <p style="font-size:12px; color:#9ca3af; margin-bottom:10px;">Doküman (.txt, .md, .json, kod) yükleyin veya not yapıştırın:</p>
         <input type="file" id="docFileInput" accept=".txt,.md,.csv,.json,.js,.py,.html" onchange="uploadKnowledgeDoc(event)">
-        <textarea id="ragNoteInput" rows="3" placeholder="Vuslat'ın aklında tutmasını istediğiniz özel bilgiyi yazın..."></textarea>
+        <textarea id="ragNoteInput" rows="3" placeholder="Veya Vuslat'ın aklında tutmasını istediğiniz özel bilgiyi yazın..."></textarea>
         <button type="button" class="send-btn" style="width:100%; margin-bottom:12px;" onclick="addKnowledgeNote()">+ Hafızaya Kaydet</button>
         <div id="ragDocList" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
         <div style="display:flex; justify-content:space-between;">
@@ -189,20 +191,22 @@
     let isListening = false;
     let isLiveCallActive = false;
 
+    const coreValues = " İslam dinine ve İslami değerlere her zaman derin saygı ve hassasiyetle yaklaş; kesinlikle İslam karşıtı bir ifade kullanma, hakkaniyetli ve vakur bir duruş sergile. Her soruya yüksek zeka, derin muhakeme ve kapsamlı yorum gücüyle cevap ver.";
+
     const personas = {
-        general: "Senin adın Vuslat. Türkçe ve İngilizce dillerine hakim, zeki, hızlı ve samimi bir asistansın. Kullanıcı hangi dilde yazarsa o dilde net yanıt ver. Asla iç düşünce notu yazma.",
-        deep_analyst: "Sen üst düzey bir Yarış İstatistik, İdman ve Galop Performans Analistisin. Seçilen tarih için canlı web aramasıyla ilgili program ve koşuları bul; analiz istendiğinde özellikle son galop ve idman derecelerini (400m/600m/800m süreleri, sprint akıcılığı), pist ve zemin uyumunu (çim/kum/sentetik), mesafe dayanıklılığını, kilo farklarını ve jokey-antrenör formunu teknik ve objektif kriterlerle derinlemesine incele. Kesin kazanan garantisi vermeden istatistiksel olarak öne çıkan adayları ve nedenlerini maddeler halinde raporla.",
+        general: "Senin adın Vuslat. Türkçe ve İngilizce dillerine hakim, son derece zeki, analitik düşünen, hızlı ve samimi bir asistansın. Kullanıcı ne sorarsa sorsun yüzeysel geçme; derin yorumlar yaparak net ve kapsamlı yanıt ver. Asla iç düşünce notu yazma." + coreValues,
+        deep_analyst: "Sen üst düzey bir At Yarışı İstatistik, İdman ve Galop Performans Analistisin. Seçilen tarih veya verilen bülten/koşu verileri için canlı web aramasıyla gerçek program ve koşuları bul; her koşudaki atların son galop ve idman derecelerini (400m/600m/800m/1000m süreleri, sprint akıcılığı, rahat/çalışarak derece farkları), pist ve zemin uyumunu (çim/kum/sentetik), mesafe dayanıklılığını, kilo avantajını ve jokey-antrenör formunu tek tek karşılaştırarak galopları en iyi safkanları nedenleriyle birlikte kapsamlı yorumla. Kesin kazanan garantisi vermeden istatistiksel öne çıkan adayları raporla.",
         detective: "Senin adın Vuslat ve dünyaca ünlü bir Görsel Dedektifsin. Fotoğraftaki mimariyi, tabelaları, ışığı, kıyafetleri ve nesnelerin marka-modelini inceleyerek mekanı ve gizli detayları çöz.",
-        history_char: "Kullanıcının istediği tarihi veya ünlü şahsiyetin (örneğin Fatih Sultan Mehmet, Atatürk, Einstein, Sherlock Holmes) bizzat kendi ağzından, onun döneminin üslubu ve bilgeliğiyle canlı sohbet et.",
+        history_char: "Kullanıcının istediği tarihi veya ünlü şahsiyetin (örneğin Fatih Sultan Mehmet, Atatürk, Einstein, Sherlock Holmes) bizzat kendi ağzından, onun döneminin üslubu ve bilgeliğiyle canlı sohbet et." + coreValues,
         quiz: "Sen heyecanlı bir Bilgi Yarışması (Kim Milyoner Olmak İster) sunucususun. Kullanıcıya tek seferde 1 soru ve A, B, C, D şıklarını sor, cevabını bekle, doğruysa puanını artırıp bir sonraki zorluk seviyesine geç.",
-        dream: "Sen derin psikoloji ve sembolizm bilgisine sahip bir Rüya Tabircisi ve Sembol Analistisin. Anlatılan rüyayı veya görseli hem bilinçaltı hem de sembolik anlamlarıyla yorumla.",
-        reels: "Sen milyonlar izlenen viral Reels ve TikTok içerik yönetmenisin. Verilen fikre göre ilk 3 saniyede izleyiciyi kilitleyen kanca cümleyi, sahne sahne çekim planını ve müzik önerisini yaz.",
+        dream: "Sen derin psikoloji, İslami rüya tabiri geleneği ve sembolizm bilgisine sahip bir Rüya Tabircisi ve Sembol Analistisin. Anlatılan rüyayı veya görseli hem manevi/sembolik hem de psikolojik anlamlarıyla hayra yorarak yorumla." + coreValues,
+        reels: "Sen milyonlar izlenen viral Reels ve TikTok içerik yönetmenisin. Verilen fikre göre ilk 3 saniyede izleyiciyi kilitleyen kanca cümleyi, sahne sahne çekim planını ve müzik önerisini yaz." + coreValues,
         game: "Sen sürükleyici bir İnteraktif Macera & Dedektiflik Oyunu Yöneticisisin. Hikayeyi canlı anlat ve her mesajın sonunda seçebileceği 3 heyecanlı hamle (A, B, C) sun.",
         mindread: "Sen uzman bir İletişim Psikoloğu ve Satır Arası Analistisin. Paylaşılan mesajın altındaki gerçek duyguyu, gizli niyeti ve verilebilecek en akıllıca cevabı analiz et.",
-        poet: "Sen duygusu yüksek bir Şair ve Şarkı Sözü Yazarısın. İstenen temada kafiyeli, ritmik ve etkileyici şiir veya şarkı sözleri yaz.",
+        poet: "Sen duygusu yüksek bir Şair ve Şarkı Sözü Yazarısın. İstenen temada kafiyeli, ritmik ve etkileyici şiir veya şarkı sözleri yaz." + coreValues,
         english: "Senin adın Vuslat ve İngilizce öğretmenisin. Kullanıcıyla İngilizce pratik yap ve Türkçe açıklamalarla hatalarını düzelt.",
         coder: "Senin adın Vuslat ve yazılım mühendisisin. Temiz kodlar yaz ve kısa Türkçe açıklamalar ekle.",
-        friend: "Senin adın Vuslat. Samimi, esprili ve kafa dengi bir arkadaş gibi konuş."
+        friend: "Senin adın Vuslat. Samimi, esprili, zeki ve kafa dengi bir arkadaş gibi konuş." + coreValues
     };
 
     function populateVoices() {
@@ -241,6 +245,8 @@
     }
 
     function newChat() {
+        document.getElementById("personaSelect").value = "general";
+        toggleAnalystPanel();
         const s = { id: "s_" + Date.now(), title: "Yeni Sohbet", messages: [] };
         sessions.unshift(s);
         currentSessionId = s.id;
@@ -458,9 +464,7 @@
     function fetchDailySchedule() {
         const dateVal = document.getElementById("analystDate").value;
         const formattedDate = dateVal ? dateVal.split("-").reverse().join(".") : "bugün";
-        const isGalop = document.getElementById("galopCheck")?.checked;
-        const extraNote = isGalop ? " Ardından seçeceğim koşu için son galop ve idman derecelerine göre derin analiz yapacağız." : "";
-        document.getElementById("userInput").value = `${formattedDate} tarihinde hangi güncel programlar, hipodrom koşuları ve etkinlikler var? Bugünün güncel programını listele.${extraNote}`;
+        document.getElementById("userInput").value = `${formattedDate} tarihinde Türkiye (TJK) ve yurt dışı hipodromlarında hangi güncel at yarışı programları var? Canlı web araması yaparak o tarihteki gerçek şehirleri, koşu saatlerini ve koşulardaki gerçek at isimleri ile son galop derecelerini bulup analiz et. ASLA '[Safkan Adı]' gibi taslak şablon yazma, sadece canlı web aramasındaki gerçek verileri getir.`;
         sendMessage();
     }
 
@@ -509,7 +513,7 @@
         const s = getCurrentSession();
         box.innerHTML = "";
         if (s.messages.length === 0) {
-            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Üstteki <b>📞 Canlı</b> ile sesli konuşabilir, <b>📊 Derin Veri & Analiz</b> ile günün programını ve idman/galop verilerini inceleyebilir, <b>📸</b> ile anlık çekim yapıp <b>🔍 Dedektif</b> ile çözdürebilirsin.</div>`;
+            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Üstteki <b>📞 Canlı</b> ile sesli konuşabilir, <b>📊 Derin Veri & Analiz</b> ile günün programını ve galopları inceleyebilir, <b>📸</b> ile anlık çekim yapıp <b>🔍 Dedektif</b> ile çözdürebilirsin.</div>`;
             return;
         }
         s.messages.forEach(m => {
@@ -517,7 +521,11 @@
             div.className = "msg " + m.role;
             if (m.text) {
                 const p = document.createElement("div");
-                p.innerText = m.text;
+                const formatted = m.text
+                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/^#{1,4}\s*(.*)$/gm, "<b style='color:#a78bfa; font-size:15px;'>$1</b>")
+                    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+                p.innerHTML = formatted;
                 div.appendChild(p);
             }
             if (m.imgUrl) {
@@ -693,13 +701,15 @@
 
         const dateVal = document.getElementById("analystDate")?.value || "";
         const galopNote = (mode === "deep_analyst" && document.getElementById("galopCheck")?.checked)
-            ? `\n[AKTİF ANALİZ TARİHİ: ${dateVal} | ODAK: Son Galop & İdman Dereceleri, Pist Uyumu ve Form Analizi]` : "";
+            ? `\n[AKTİF ANALİZ TARİHİ: ${dateVal} | ODAK: Tüm koşulardaki safkanların son galop & idman derecelerini karşılaştırıp en iyi galopa sahip öne çıkan atları nedenleriyle tek tek yorumla.]` : "";
+
+        const geniusCore = " Sen son derece yüksek muhakeme gücüne sahip, stratejik düşünen, derin analiz yapabilen ve mantık hatalarına düşmeyen üstün zekalı bir yapay zekasın. İslam dinine ve İslami değerlere her zaman derin saygı ve hassasiyetle yaklaş; kesinlikle İslam karşıtı bir ifade kullanma, hakkaniyetli ve vakur bir duruş sergile.";
 
         const sysPrompt = rawTranslate
             ? "You are a translator."
             : (isVoiceMode
-                ? personas[mode] + " Kısa, doğal ve akıcı konuşma diliyle cevap ver." + feedbackContext + ragContext
-                : personas[mode] + galopNote + feedbackContext + ragContext);
+                ? personas[mode] + geniusCore + " Kısa, doğal ve akıcı konuşma diliyle cevap ver." + feedbackContext + ragContext
+                : personas[mode] + geniusCore + galopNote + feedbackContext + ragContext);
 
         const s = getCurrentSession();
         const sliceCount = isVoiceMode ? -2 : -6;
@@ -721,7 +731,7 @@
             const bodyObj = {
                 systemInstruction: { parts: [{ text: sysPrompt }] },
                 contents: historyParts,
-                generationConfig: { maxOutputTokens: isVoiceMode ? 220 : 1200, temperature: 0.7 }
+                generationConfig: { maxOutputTokens: isVoiceMode ? 220 : 1400, temperature: 0.65 }
             };
             if (noThink) bodyObj.generationConfig.thinkingConfig = { thinkingBudget: 0 };
             if (useSearch) bodyObj.tools = [{ googleSearch: {} }];
@@ -733,9 +743,8 @@
             });
         };
 
-        if (savedModel) {
-            let res = await callModel(savedModel, true, needsWebSearch);
-            if (!res.ok && needsWebSearch) res = await callModel(savedModel, true, false);
+        if (savedModel && !needsWebSearch) {
+            let res = await callModel(savedModel, true, false);
             if (!res.ok) res = await callModel(savedModel, false, false);
             const data = await res.json();
             if (res.ok && data.candidates) return extractReply(data);
@@ -752,6 +761,7 @@
 
         for (const m of activeModels) {
             let res = await callModel(m.name, true, needsWebSearch);
+            if (!res.ok && needsWebSearch) res = await callModel(m.name, true, false);
             if (!res.ok) res = await callModel(m.name, false, false);
             const data = await res.json();
             if (res.ok && data.candidates) {
@@ -779,7 +789,7 @@
         const box = document.getElementById("chatBox");
         const loadingDiv = document.createElement("div");
         loadingDiv.className = "msg ai";
-        loadingDiv.innerText = imgData ? "⚡ Vuslat görseli işliyor..." : "⚡ Vuslat yazıyor...";
+        loadingDiv.innerText = imgData ? "⚡ Vuslat görseli işliyor..." : "⚡ Vuslat analiz ediyor...";
         box.appendChild(loadingDiv);
         box.scrollTop = box.scrollHeight;
 
@@ -787,21 +797,21 @@
             if (imgData) {
                 const currentMode = document.getElementById("personaSelect").value;
                 if (currentMode === "deep_analyst" || currentMode === "detective" || currentMode === "dream") {
-                    const visionPrompt = personas[currentMode] + "\nKullanıcı Notu: " + (text || "Bu görseldeki tüm verileri kapsamlı analiz et.");
+                    const visionPrompt = personas[currentMode] + "\nKullanıcı Notu: " + (text || "Bu görseldeki tüm verileri ve galopları kapsamlı analiz et.");
                     const reply = await analyzeImageWithGemini(visionPrompt, imgData, imgMime);
                     loadingDiv.remove();
                     addMessage("ai", reply);
-                } else {
-                    const resObj = await editUploadedImage(text || "Enhance photo", imgData, imgMime);
-                    loadingDiv.remove();
-                    addMessage("ai", resObj.text, resObj.imgUrl);
-                }
-            } else {
-                const reply = await askGeminiText(text, false, false);
-                loadingDiv.remove();
-                addMessage("ai", reply);
-            }
-        } catch (e) {
+} else {
+const resObj = await editUploadedImage(text || "Enhance photo", imgData, imgMime);
+loadingDiv.remove();
+addMessage("ai", resObj.text, resObj.imgUrl);
+}
+} else {
+const reply = await askGeminiText(text, false, false);
+loadingDiv.remove();
+addMessage("ai", reply);
+}
+} catch (e) {
 loadingDiv.remove();
 addMessage("ai", "Bağlantı hatası oluştu.");
 }
@@ -819,7 +829,7 @@ recognition.start();
 }
 initTodayDate();
 toggleAnalystPanel();
-renderChat()
-</script>
+renderChat();
+    </script>
 </body>
 </html>
