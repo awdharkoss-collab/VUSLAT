@@ -1,0 +1,213 @@
+name: VUSLAT APK Olustur
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu Cek
+        uses: actions/checkout@v4
+
+      - name: Java 17 Kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Gradle Kur
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
+      - name: VUSLAT Projesini ve Logosunu Olustur
+        run: |
+          mkdir -p app/src/main/java/com/vuslat/asistan
+          mkdir -p app/src/main/assets
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            mkdir -p app/src/main/res/mipmap-$d
+          done
+
+          cp index.html app/src/main/assets/index.html
+
+          python3 -c '
+          import zlib, struct, math
+          W, H = 512, 512
+          img = bytearray(W * H * 4)
+          def set_px(x, y, r, g, b, a=255):
+              if 0 <= x < W and 0 <= y < H:
+                  idx = (y * W + x) * 4
+                  img[idx:idx+4] = bytes([r, g, b, a])
+          for y in range(H):
+              for x in range(W):
+                  dx, dy = x - 256, y - 256
+                  dist = math.hypot(dx, dy)
+                  t = (x + y) / (W + H)
+                  r = int(88 * (1 - t) + 6 * t)
+                  g = int(28 * (1 - t) + 182 * t)
+                  b = int(235 * (1 - t) + 212 * t)
+                  if 218 <= dist <= 232:
+                      r, g, b = 167, 139, 250
+                  set_px(x, y, r, g, b)
+          for y in range(145, 385):
+              prog = (y - 145) / 240.0
+              left_x = int(142 + prog * 114)
+              right_x = int(370 - prog * 114)
+              for dx in range(-24, 25):
+                  set_px(left_x + dx, y, 255, 255, 255)
+                  set_px(right_x + dx, y, 255, 255, 255)
+          raw = b"".join(b"\x00" + bytes(img[y*W*4:(y+1)*W*4]) for y in range(H))
+          def chunk(t, d): return struct.pack(">I", len(d)) + t + d + struct.pack(">I", zlib.crc32(t + d) & 0xffffffff)
+          png = b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", W, H, 8, 6, 0, 0, 0)) + chunk(b"IDAT", zlib.compress(raw)) + chunk(b"IEND", b"")
+          open("logo.png", "wb").write(png)
+          for d in ["mdpi", "hdpi", "xhdpi", "xxhdpi", "xxxhdpi"]:
+              open(f"app/src/main/res/mipmap-{d}/ic_launcher.png", "wb").write(png)
+              open(f"app/src/main/res/mipmap-{d}/ic_launcher_round.png", "wb").write(png)
+          '
+
+          cat << 'EOF' > settings.gradle
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+          rootProject.name = "VuslatAsistan"
+          include ":app"
+          EOF
+
+          cat << 'EOF' > build.gradle
+          plugins {
+              id "com.android.application" version "8.2.2" apply false
+              id "org.jetbrains.kotlin.android" version "1.9.22" apply false
+          }
+          EOF
+
+          cat << 'EOF' > gradle.properties
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          EOF
+
+          cat << 'EOF' > app/build.gradle
+          plugins {
+              id "com.android.application"
+              id "org.jetbrains.kotlin.android"
+          }
+          android {
+              namespace "com.vuslat.asistan"
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.vuslat.asistan"
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0"
+              }
+              compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+              kotlinOptions { jvmTarget = "17" }
+          }
+          EOF
+
+          cat << 'EOF' > app/src/main/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://android.com">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.RECORD_AUDIO" />
+              <uses-permission android:name="android.permission.CAMERA" />
+              <application
+                  android:label="VUSLAT"
+                  android:icon="@mipmap/ic_launcher"
+                  android:roundIcon="@mipmap/ic_launcher_round">
+                  <activity
+                      android:name=".MainActivity"
+                      android:configChanges="orientation|screenSize|keyboardHidden"
+                      android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          cat << 'EOF' > app/src/main/java/com/vuslat/asistan/MainActivity.kt
+          package com.vuslat.asistan
+
+          import android.Manifest
+          import android.annotation.SuppressLint
+          import android.app.Activity
+          import android.content.Intent
+          import android.content.pm.PackageManager
+          import android.net.Uri
+          import android.os.Bundle
+          import android.provider.MediaStore
+          import android.webkit.PermissionRequest
+          import android.webkit.ValueCallback
+          import android.webkit.WebChromeClient
+          import android.webkit.WebView
+          import android.webkit.WebViewClient
+
+          class MainActivity : Activity() {
+              private lateinit var webView: WebView
+              private var filePathCallback: ValueCallback<Array<Uri>>? = null
+
+              @SuppressLint("SetJavaScriptEnabled")
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  val perms = arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA)
+                  if (perms.any { checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED }) {
+                      requestPermissions(perms, 1)
+                  }
+                  webView = WebView(this)
+                  setContentView(webView)
+                  webView.settings.apply {
+                      javaScriptEnabled = true
+                      domStorageEnabled = true
+                      allowFileAccess = true
+                      allowContentAccess = true
+                  }
+                  webView.webViewClient = WebViewClient()
+                  webView.webChromeClient = object : WebChromeClient() {
+                      override fun onPermissionRequest(request: PermissionRequest) {
+                          request.grant(request.resources)
+                      }
+                      override fun onShowFileChooser(
+                          webView: WebView?,
+                          filePathCallback: ValueCallback<Array<Uri>>?,
+                          fileChooserParams: FileChooserParams?
+                      ): Boolean {
+                          this@MainActivity.filePathCallback = filePathCallback
+                          val contentIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                              addCategory(Intent.CATEGORY_OPENABLE)
+                              type = "*/*"
+                          }
+                          val camIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                          val chooser = Intent.createChooser(contentIntent, "Vuslat Seçim").apply {
+                              putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(camIntent))
+                          }
+                          startActivityForResult(chooser, 100)
+                          return true
+                      }
+                  }
+                  webView.loadUrl("file:///android_asset/index.html")
+              }
+
+              @Deprecated("Deprecated in Java")
+              override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+                  if (requestCode == 100) {
+                      val res = if (resultCode == RESULT_OK && data?.data != null) arrayOf(data.data!!) else null
+                      filePathCallback?.onReceiveValue(res)
+                      filePathCallback = null
+                  }
+              }
+          }
+          EOF
+
+      - name: APK Derle
+        run: gradle assembleDebug
+
+      - name: APK Dosyasini Yukle
+        uses: actions/upload-artifact@v4
+        with:
+          name: VUSLAT-ULTIMATE-APK
+          path: app/build/outputs/apk/debug/*.apk
