@@ -92,7 +92,7 @@
     </div>
     <div>
         <div class="orb" id="callOrb">🎙️</div>
-        <p id="callStatusText" style="margin-top:20px; font-size:15px; color:#e5e7eb; max-width:300px;">Seni dinliyorum, konuşabilirsin...</p>
+        <p id="callStatusText" style="margin-top:20px; font-size:15px; color:#e5e7eb; max-width:300px;">Seni dinliyorum...</p>
     </div>
     <button type="button" class="hangup-btn" onclick="endLiveCall()">📵 Konuşmayı Bitir</button>
 </div>
@@ -257,10 +257,10 @@
         }
         if (chosen) utter.voice = chosen;
 
-        if (voiceProfile === "deep_male") { utter.pitch = 0.58; utter.rate = 0.95; }
-        else if (voiceProfile === "normal_male") { utter.pitch = 0.85; utter.rate = 0.98; }
-        else if (voiceProfile === "natural_female") { utter.pitch = 1.05; utter.rate = 1.0; }
-        else { utter.pitch = 1.22; utter.rate = 1.03; }
+        if (voiceProfile === "deep_male") { utter.pitch = 0.58; utter.rate = 0.98; }
+        else if (voiceProfile === "normal_male") { utter.pitch = 0.85; utter.rate = 1.0; }
+        else if (voiceProfile === "natural_female") { utter.pitch = 1.05; utter.rate = 1.02; }
+        else { utter.pitch = 1.22; utter.rate = 1.05; }
 
         utter.onend = () => { if (onDone) onDone(); };
         utter.onerror = () => { if (onDone) onDone(); };
@@ -291,18 +291,21 @@
         const status = document.getElementById("callStatusText");
         orb.innerText = "🎙️";
         orb.classList.add("pulse");
-        status.innerText = "Seni dinliyorum, konuşabilirsin...";
+        status.innerText = "Seni dinliyorum...";
 
         recognition = new SpeechRec();
         recognition.lang = "tr-TR";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
         recognition.onresult = async (e) => {
             const spoken = e.results.item(0).item(0).transcript;
             orb.classList.remove("pulse");
             orb.innerText = "⚡";
-            status.innerText = `"${spoken}"\nDüşünüyorum...`;
+            status.innerText = `"${spoken}"`;
             addMessage("user", spoken);
 
-            const reply = await askGeminiText(spoken + " (Cevabı kısa ve konuşma dilinde ver)", false);
+            const reply = await askGeminiText(spoken, false, true);
             addMessage("ai", reply);
 
             if (!isLiveCallActive) return;
@@ -312,7 +315,7 @@
 
             speakText(reply, () => { if (isLiveCallActive) listenInLiveCall(); });
         };
-        recognition.onerror = () => { if (isLiveCallActive) setTimeout(listenInLiveCall, 800); };
+        recognition.onerror = () => { if (isLiveCallActive) setTimeout(listenInLiveCall, 300); };
         recognition.start();
     }
     function quickAsk(txt) {
@@ -411,7 +414,7 @@
         let engPrompt = promptText;
         if (apiKey) {
             try {
-                const trRes = await askGeminiText("Translate to detailed English image prompt, output ONLY English: " + promptText, true);
+                const trRes = await askGeminiText("Translate to detailed English image prompt, output ONLY English: " + promptText, true, true);
                 if (trRes && !trRes.includes("yoğun")) engPrompt = trRes.trim();
             } catch (e) {}
         }
@@ -454,14 +457,17 @@
         return { text: "Bu model şu an görsel düzenleme döndürmedi, farklı bir komutla tekrar dene.", imgUrl: null };
     }
 
-    async function askGeminiText(text, rawTranslate = false) {
+    async function askGeminiText(text, rawTranslate = false, isVoiceMode = false) {
         const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
         let savedModel = localStorage.getItem("vuslat_fast_model");
         const mode = document.getElementById("personaSelect").value;
-        const sysPrompt = rawTranslate ? "You are a translator." : personas[mode];
+        const sysPrompt = rawTranslate
+            ? "You are a translator."
+            : (isVoiceMode ? personas[mode] + " ÇOK KISA, EN FAZLA 1-2 CÜMLELİK DOĞAL KONUŞMA DİLİYLE CEVAP VER." : personas[mode]);
 
         const s = getCurrentSession();
-        const historyParts = rawTranslate ? [] : s.messages.slice(-6, -1).filter(m => m.text).map(m => ({
+        const sliceCount = isVoiceMode ? -2 : -6;
+        const historyParts = rawTranslate ? [] : s.messages.slice(sliceCount, -1).filter(m => m.text).map(m => ({
             role: m.role === "user" ? "user" : "model",
             parts: [{ text: m.text }]
         }));
@@ -474,10 +480,17 @@
         };
 
         const callModel = async (m) => {
+            const bodyObj = {
+                systemInstruction: { parts: [{ text: sysPrompt }] },
+                contents: historyParts
+            };
+            if (isVoiceMode) {
+                bodyObj.generationConfig = { maxOutputTokens: 120, temperature: 0.7 };
+            }
             return await fetch(`${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ systemInstruction: { parts: [{ text: sysPrompt }] }, contents: historyParts })
+                body: JSON.stringify(bodyObj)
             });
         };
 
@@ -502,7 +515,7 @@
                 return extractReply(data);
             }
         }
-        return "Sunucu şu an yoğun, lütfen tekrar dene.";
+        return "Sunucu şu an yoğun, tekrar dene.";
     }
 
     async function sendMessage() {
@@ -532,7 +545,7 @@
                 loadingDiv.remove();
                 addMessage("ai", resObj.text, resObj.imgUrl);
             } else {
-                const reply = await askGeminiText(text, false);
+                const reply = await askGeminiText(text, false, false);
                 loadingDiv.remove();
                 addMessage("ai", reply);
             }
