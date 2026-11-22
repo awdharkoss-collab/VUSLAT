@@ -13,11 +13,11 @@
         :root { --bg: #090a0f; --panel: #13151f; --accent: #7c3aed; --text: #f3f4f6; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         html, body { width: 100%; height: 100dvh; background: var(--bg); color: var(--text); display: flex; flex-direction: column; overflow: hidden; }
-        header { background: var(--panel); padding: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .logo { font-size: 17px; font-weight: 900; background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex-shrink: 0; }
-        .mode-sel { background: #1e2130; color: #fff; border: 1px solid rgba(124,58,237,0.5); padding: 5px; border-radius: 8px; font-size: 11px; font-weight: 700; outline: none; flex: 1; min-width: 0; }
+        header { background: var(--panel); padding: 8px 10px; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .logo { font-size: 16px; font-weight: 900; background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex-shrink: 0; }
+        .mode-sel { background: #1e2130; color: #fff; border: 1px solid rgba(124,58,237,0.5); padding: 5px 4px; border-radius: 8px; font-size: 11px; font-weight: 700; outline: none; flex: 1; min-width: 0; }
         .header-btns { display: flex; gap: 4px; flex-shrink: 0; }
-        .icon-btn { background: #1f2230; color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 6px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .icon-btn { background: #1f2230; color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 6px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
         .icon-btn.live { background: #059669; border: none; }
         .chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: #0d0f16; border-bottom: 1px solid rgba(255,255,255,0.05); scrollbar-width: none; }
         .chips::-webkit-scrollbar { display: none; }
@@ -27,7 +27,7 @@
         .msg.user { align-self: flex-end; background: linear-gradient(135deg, #7c3aed, #5b21b6); color: #fff; border-bottom-right-radius: 4px; }
         .msg.ai { align-self: flex-start; background: var(--panel); border: 1px solid rgba(255,255,255,0.08); color: #e5e7eb; border-bottom-left-radius: 4px; }
         .msg img { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
-        .msg-actions { display: flex; gap: 12px; margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .msg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
         .act-tag { font-size: 11px; color: #38bdf8; cursor: pointer; font-weight: 700; text-decoration: none; }
         .preview-bar { display: none; background: #181b28; padding: 8px 12px; align-items: center; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
         .preview-bar img { height: 42px; width: 42px; object-fit: cover; border-radius: 6px; }
@@ -39,7 +39,7 @@
         .send-btn { background: var(--accent); color: #fff; border: none; padding: 0 13px; height: 38px; border-radius: 20px; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999; align-items: center; justify-content: center; padding: 16px; }
         .modal-card { background: var(--panel); border: 1px solid var(--accent); border-radius: 14px; padding: 18px; width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; }
-        .modal-card input, .modal-card select { width: 100%; background: #0d0f16; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; outline: none; }
+        .modal-card input, .modal-card select, .modal-card textarea { width: 100%; background: #0d0f16; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
         .hist-item { background: #1b1e2b; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; }
         .call-screen { display: none; position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #090a0f 75%); z-index: 1000; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 20px; text-align: center; }
         .orb { width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, #38bdf8, #7c3aed); box-shadow: 0 0 45px rgba(124,58,237,0.7); display: flex; align-items: center; justify-content: center; font-size: 44px; transition: 0.3s; }
@@ -58,7 +58,8 @@
         <option value="friend">😎 Arkadaş</option>
     </select>
     <div class="header-btns">
-        <button type="button" class="icon-btn live" onclick="startLiveCall()">📞 Canlı Konuş</button>
+        <button type="button" class="icon-btn" onclick="openRagModal()">📚 Hafıza</button>
+        <button type="button" class="icon-btn live" onclick="startLiveCall()">📞 Canlı</button>
         <button type="button" class="icon-btn" onclick="openSettings()">⚙️ Ayar</button>
     </div>
 </header>
@@ -96,7 +97,6 @@
     </div>
     <button type="button" class="hangup-btn" onclick="endLiveCall()">📵 Konuşmayı Bitir</button>
 </div>
-
 <div class="modal" id="settingsModal">
     <div class="modal-card">
         <h3 style="margin-bottom:10px;">⚙️ Vuslat Ses & API Ayarı</h3>
@@ -131,12 +131,29 @@
         </div>
     </div>
 </div>
+
+<div class="modal" id="ragModal">
+    <div class="modal-card">
+        <h3 style="margin-bottom:8px;">📚 Akıllı Hafıza & Dokümanlar (RAG)</h3>
+        <p style="font-size:12px; color:#9ca3af; margin-bottom:10px;">Vuslat'ın ezberlemesini istediğiniz dokümanları (.txt, .md, .json, kod) yükleyin veya not yapıştırın:</p>
+        <input type="file" id="docFileInput" accept=".txt,.md,.csv,.json,.js,.py,.html" onchange="uploadKnowledgeDoc(event)">
+        <textarea id="ragNoteInput" rows="3" placeholder="Veya Vuslat'ın aklında tutmasını istediğiniz özel bilgiyi buraya yazın..."></textarea>
+        <button type="button" class="send-btn" style="width:100%; margin-bottom:12px;" onclick="addKnowledgeNote()">+ Hafızaya Kaydet</button>
+        <div id="ragDocList" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
+        <div style="display:flex; justify-content:space-between;">
+            <button type="button" class="icon-btn" style="color:#ef4444;" onclick="clearRagMemory()">🗑️ Hafızayı Sıfırla</button>
+            <button type="button" class="icon-btn" onclick="document.getElementById('ragModal').style.display='none'">Kapat</button>
+        </div>
+    </div>
+</div>
 <script>
     let sessions = JSON.parse(localStorage.getItem("vuslat_sessions") || "[]");
     let currentSessionId = localStorage.getItem("vuslat_curr_id") || null;
     let apiKey = localStorage.getItem("vuslat_ai_key") || "";
     let savedVoiceName = localStorage.getItem("vuslat_voice_name") || "";
     let voiceProfile = localStorage.getItem("vuslat_voice_profile") || "deep_male";
+    let ragDocs = JSON.parse(localStorage.getItem("vuslat_rag_docs") || "[]");
+    let learnedRules = JSON.parse(localStorage.getItem("vuslat_learned_rules") || "[]");
     let attachedImageBase64 = null;
     let attachedMime = "image/jpeg";
     let recognition = null;
@@ -232,7 +249,7 @@
         localStorage.setItem("vuslat_voice_name", savedVoiceName);
         localStorage.removeItem("vuslat_fast_model");
         closeSettings();
-        addMessage("ai", "Ayarların kaydedildi! 📞 Canlı Konuş ile sesli sohbet edebilirsin.");
+        addMessage("ai", "Ayarların kaydedildi! 📞 Canlı ile sesli sohbet edebilir veya 📚 Hafıza ile bana doküman öğretebilirsin.");
     }
     function testCurrentVoice() {
         voiceProfile = document.getElementById("voiceGenderProfile").value;
@@ -318,6 +335,65 @@
         recognition.onerror = () => { if (isLiveCallActive) setTimeout(listenInLiveCall, 300); };
         recognition.start();
     }
+
+    function openRagModal() {
+        renderRagList();
+        document.getElementById("ragModal").style.display = "flex";
+    }
+
+    function renderRagList() {
+        const list = document.getElementById("ragDocList");
+        list.innerHTML = ragDocs.length === 0 ? `<div style="font-size:12px; color:#6b7280;">Henüz hafızaya doküman eklenmedi.</div>` : "";
+        ragDocs.forEach((d, idx) => {
+            list.innerHTML += `<div class="hist-item"><span>📄 ${d.name} (${d.content.length} krk)</span><span style="color:#ef4444;" onclick="ragDocs.splice(${idx},1); localStorage.setItem('vuslat_rag_docs', JSON.stringify(ragDocs)); renderRagList();">✕</span></div>`;
+        });
+    }
+
+    function uploadKnowledgeDoc(event) {
+        const file = event.target.files.item(0);
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            ragDocs.push({ name: file.name, content: e.target.result.slice(0, 15000) });
+            localStorage.setItem("vuslat_rag_docs", JSON.stringify(ragDocs));
+            renderRagList();
+        };
+        reader.readAsText(file);
+        event.target.value = "";
+    }
+
+    function addKnowledgeNote() {
+        const note = document.getElementById("ragNoteInput").value.trim();
+        if (!note) return;
+        ragDocs.push({ name: "Not: " + note.slice(0, 18), content: note });
+        localStorage.setItem("vuslat_rag_docs", JSON.stringify(ragDocs));
+        document.getElementById("ragNoteInput").value = "";
+        renderRagList();
+    }
+
+    function clearRagMemory() {
+        ragDocs = [];
+        learnedRules = [];
+        localStorage.removeItem("vuslat_rag_docs");
+        localStorage.removeItem("vuslat_learned_rules");
+        renderRagList();
+    }
+
+    function teachCorrection() {
+        const fix = prompt("Vuslat bu konuda nasıl davranmalı / neyi düzeltmeli?");
+        if (!fix) return;
+        learnedRules.push(fix.trim());
+        localStorage.setItem("vuslat_learned_rules", JSON.stringify(learnedRules.slice(-15)));
+        addMessage("ai", "✓ Geri bildirimin öğrenme hafızama kaydedildi. Bundan sonra bu kurala dikkat edeceğim!");
+    }
+
+    function searchRagContext(query) {
+        if (ragDocs.length === 0) return "";
+        const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+        const matches = ragDocs.filter(d => words.some(w => d.content.toLowerCase().includes(w)) || ragDocs.length <= 2);
+        if (matches.length === 0) return "";
+        return "\n[KULLANICININ YÜKLEDİĞİ BİLGİ BANKASI (RAG)]:\n" + matches.map(m => `--- ${m.name} ---\n${m.content.slice(0, 4000)}`).join("\n");
+    }
     function quickAsk(txt) {
         const input = document.getElementById("userInput");
         input.value = txt;
@@ -357,7 +433,7 @@
         const s = getCurrentSession();
         box.innerHTML = "";
         if (s.messages.length === 0) {
-            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Üstteki <b>📞 Canlı Konuş</b> butonuna basarak sesli sohbet edebilir, <b>📷</b> ile fotoğrafını düzenletebilir veya <b>🎨 Çiz</b> ile görsel üretebilirsin.</div>`;
+            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Üstteki <b>📞 Canlı</b> ile sesli konuşabilir, <b>📚 Hafıza</b> ile bana bilgi öğretebilir, <b>📷</b> ile fotoğrafını düzenletebilir veya <b>🎨 Çiz</b> ile görsel üretebilirsin.</div>`;
             return;
         }
         s.messages.forEach(m => {
@@ -388,6 +464,18 @@
                     cp.innerText = "📋 Kopyala";
                     cp.onclick = () => { navigator.clipboard.writeText(m.text); cp.innerText = "✓ Kopyalandı"; };
                     acts.appendChild(cp);
+
+                    const up = document.createElement("span");
+                    up.className = "act-tag";
+                    up.innerText = "👍";
+                    up.onclick = () => { up.innerText = "👍 Kaydedildi"; };
+                    acts.appendChild(up);
+
+                    const dn = document.createElement("span");
+                    dn.className = "act-tag";
+                    dn.innerText = "👎 Düzelt";
+                    dn.onclick = () => teachCorrection();
+                    acts.appendChild(dn);
                 }
                 if (m.imgUrl) {
                     const dl = document.createElement("a");
@@ -404,6 +492,7 @@
         });
         box.scrollTop = box.scrollHeight;
     }
+
     async function triggerImageGen() {
         const input = document.getElementById("userInput");
         const promptText = input.value.trim();
@@ -424,7 +513,6 @@
         const finalImgUrl = `${imgApi}${encodeURIComponent(engPrompt)}?width=1024&height=1024&seed=${seed}&model=flux&enhance=true&nologo=true`;
         addMessage("ai", `"${promptText}"`, finalImgUrl);
     }
-
     async function editUploadedImage(promptText, imgBase64, mimeType) {
         const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
         const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
@@ -461,9 +549,16 @@
         const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
         let savedModel = localStorage.getItem("vuslat_fast_model");
         const mode = document.getElementById("personaSelect").value;
+
+        const ragContext = rawTranslate ? "" : searchRagContext(text);
+        const feedbackContext = (!rawTranslate && learnedRules.length > 0)
+            ? "\n[KULLANICI GERİ BİLDİRİM KURALLARI]: " + learnedRules.join(" | ") : "";
+
         const sysPrompt = rawTranslate
             ? "You are a translator."
-            : (isVoiceMode ? personas[mode] + " Kısa, doğal ve akıcı konuşma diliyle cevap ver." : personas[mode]);
+            : (isVoiceMode
+                ? personas[mode] + " Kısa, doğal ve akıcı konuşma diliyle cevap ver." + feedbackContext + ragContext
+                : personas[mode] + feedbackContext + ragContext);
 
         const s = getCurrentSession();
         const sliceCount = isVoiceMode ? -2 : -6;
@@ -473,19 +568,23 @@
         }));
         historyParts.push({ role: "user", parts: [{ text: text }] });
 
+        const needsWebSearch = !rawTranslate && /hava|dolar|euro|altın|haber|kaç|skor|maç|güncel|bugün|nedir|kimdir|fiyat/i.test(text);
+
         const extractReply = (data) => {
             const parts = data.candidates?.at(0)?.content?.parts || [];
             const realPart = parts.find(p => !p.thought && p.text);
             return realPart?.text?.trim() || "Buyur, seni dinliyorum.";
         };
 
-        const callModel = async (m, noThink = true) => {
+        const callModel = async (m, noThink = true, useSearch = false) => {
             const bodyObj = {
                 systemInstruction: { parts: [{ text: sysPrompt }] },
                 contents: historyParts,
-                generationConfig: { maxOutputTokens: isVoiceMode ? 220 : 800, temperature: 0.7 }
+                generationConfig: { maxOutputTokens: isVoiceMode ? 220 : 1000, temperature: 0.7 }
             };
             if (noThink) bodyObj.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+            if (useSearch) bodyObj.tools = [{ googleSearch: {} }];
+
             return await fetch(`${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -494,24 +593,28 @@
         };
 
         if (savedModel) {
-            let res = await callModel(savedModel, true);
-            if (!res.ok) res = await callModel(savedModel, false);
+            let res = await callModel(savedModel, true, needsWebSearch);
+            if (!res.ok && needsWebSearch) res = await callModel(savedModel, true, false);
+            if (!res.ok) res = await callModel(savedModel, false, false);
             const data = await res.json();
             if (res.ok && data.candidates) return extractReply(data);
         }
 
         const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
         const listData = await listRes.json();
+        const isComplexTask = /kod|python|html|analiz|hesapla|makale/i.test(text) && !isVoiceMode;
         const activeModels = (listData.models || [])
             .filter(m => m.supportedGenerationMethods?.includes("generateContent") && !m.name.includes("1.5") && !m.name.includes("2.5") && !m.name.includes("2.0"))
-            .sort((a, b) => (b.name.includes("lite") ? 1 : 0) - (a.name.includes("lite") ? 1 : 0));
+            .sort((a, b) => isComplexTask
+                ? (b.name.includes("pro") ? 1 : 0) - (a.name.includes("pro") ? 1 : 0)
+                : (b.name.includes("lite") ? 1 : 0) - (a.name.includes("lite") ? 1 : 0));
 
         for (const m of activeModels) {
-            let res = await callModel(m.name, true);
-            if (!res.ok) res = await callModel(m.name, false);
+            let res = await callModel(m.name, true, needsWebSearch);
+            if (!res.ok) res = await callModel(m.name, false, false);
             const data = await res.json();
             if (res.ok && data.candidates) {
-                localStorage.setItem("vuslat_fast_model", m.name);
+                if (!isComplexTask) localStorage.setItem("vuslat_fast_model", m.name);
                 return extractReply(data);
             }
         }
