@@ -3,103 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VUSLAT AI • Ultimate Vision Pro</title>
+    <title>VUSLAT AI • Ultimate</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VUSLAT">
+    <link rel="apple-touch-icon" href="logo.png">
     <style>
-        :root { --bg: #070b14; --panel: #0f172a; --accent: #38bdf8; --purple: #8b5cf6; --text: #f1f5f9; }
+        :root { --bg: #090a0f; --panel: #13151f; --accent: #7c3aed; --text: #f3f4f6; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         html, body { width: 100%; height: 100dvh; background: var(--bg); color: var(--text); display: flex; flex-direction: column; overflow: hidden; }
-        header { background: var(--panel); padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(56,189,248,0.25); gap: 6px; }
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); white-space: nowrap; }
-        .top-btns { display: flex; gap: 5px; align-items: center; overflow-x: auto; scrollbar-width: none; }
-        .top-btns::-webkit-scrollbar { display: none; }
-        .chip { background: #1e293b; color: #e2e8f0; border: 1px solid rgba(56,189,248,0.3); padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-        .chip.live { background: #10b981; color: #052e16; border: none; }
-        .modes { display: flex; gap: 6px; overflow-x: auto; padding: 7px 10px; background: #0b1120; border-bottom: 1px solid rgba(255,255,255,0.06); scrollbar-width: none; }
-        .modes::-webkit-scrollbar { display: none; }
-        .mode-btn { background: #1e293b; color: #cbd5e1; border: 1px solid transparent; padding: 5px 9px; border-radius: 9px; font-size: 11px; font-weight: 700; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
-        .mode-btn.active { background: rgba(56,189,248,0.16); color: var(--accent); border-color: var(--accent); }
-        .vision-bar { display: flex; gap: 5px; overflow-x: auto; padding: 6px 10px; background: #091224; border-bottom: 1px solid rgba(139,92,246,0.25); scrollbar-width: none; align-items: center; }
-        .vision-bar::-webkit-scrollbar { display: none; }
-        .v-chip { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.4); padding: 4px 8px; border-radius: 7px; font-size: 10px; font-weight: 800; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
-        .v-chip.active { background: #8b5cf6; color: #fff; }
-        .chat { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 88%; padding: 11px 14px; border-radius: 14px; font-size: 14px; line-height: 1.55; word-wrap: break-word; }
-        .msg.user { align-self: flex-end; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; border-bottom-right-radius: 4px; }
-        .msg.bot { align-self: flex-start; background: var(--panel); border: 1px solid rgba(56,189,248,0.25); border-bottom-left-radius: 4px; }
-        .msg img { max-width: 100%; border-radius: 10px; margin-top: 6px; display: block; }
-        .bar { background: var(--panel); padding: 8px 10px; display: flex; align-items: center; gap: 6px; border-top: 1px solid rgba(56,189,248,0.25); }
-        .icon-btn { background: #1e293b; color: #fff; border: none; width: 36px; height: 36px; border-radius: 10px; font-size: 15px; cursor: pointer; flex-shrink: 0; }
-        input[type="text"], textarea { flex: 1; min-width: 0; background: #070b14; color: #fff; border: 1px solid #334155; padding: 9px 11px; border-radius: 12px; font-size: 13px; outline: none; }
-        .send-btn { background: linear-gradient(135deg, #38bdf8, #8b5cf6); color: #070b14; border: none; padding: 0 13px; height: 36px; border-radius: 12px; font-weight: 900; font-size: 12px; cursor: pointer; flex-shrink: 0; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 99; align-items: center; justify-content: center; padding: 16px; }
-        .modal-card { background: var(--panel); border: 1px solid var(--accent); border-radius: 16px; padding: 18px; width: 100%; max-width: 380px; }
+        header { background: var(--panel); padding: 8px 10px; display: flex; align-items: center; gap: 5px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .logo { font-size: 16px; font-weight: 900; background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; flex-shrink: 0; }
+        .mode-sel { background: #1e2130; color: #fff; border: 1px solid rgba(124,58,237,0.5); padding: 5px 4px; border-radius: 8px; font-size: 11px; font-weight: 700; outline: none; flex: 1; min-width: 0; }
+        .header-btns { display: flex; gap: 4px; flex-shrink: 0; }
+        .icon-btn { background: #1f2230; color: #fff; border: 1px solid rgba(255,255,255,0.12); padding: 6px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+        .icon-btn.live { background: #059669; border: none; }
+        .chips { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; background: #0d0f16; border-bottom: 1px solid rgba(255,255,255,0.05); scrollbar-width: none; }
+        .chips::-webkit-scrollbar { display: none; }
+        .chip { background: #181b28; color: #d1d5db; border: 1px solid rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 16px; font-size: 11px; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+        .chat-box { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+        .msg { max-width: 88%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; }
+        .msg.user { align-self: flex-end; background: linear-gradient(135deg, #7c3aed, #5b21b6); color: #fff; border-bottom-right-radius: 4px; }
+        .msg.ai { align-self: flex-start; background: var(--panel); border: 1px solid rgba(255,255,255,0.08); color: #e5e7eb; border-bottom-left-radius: 4px; }
+        .msg img { max-width: 100%; border-radius: 10px; margin-top: 8px; display: block; }
+        .msg-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); }
+        .act-tag { font-size: 11px; color: #38bdf8; cursor: pointer; font-weight: 700; text-decoration: none; }
+        .preview-bar { display: none; background: #181b28; padding: 8px 12px; align-items: center; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .preview-bar img { height: 42px; width: 42px; object-fit: cover; border-radius: 6px; }
+        .input-bar { background: var(--panel); padding: 8px 10px; display: flex; gap: 5px; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); }
+        .text-in { flex: 1; background: #1d202e; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 10px 12px; border-radius: 22px; font-size: 14px; outline: none; min-width: 55px; }
+        .round-btn { background: #1f2230; color: #fff; border: 1px solid rgba(255,255,255,0.15); width: 36px; height: 36px; border-radius: 50%; font-size: 15px; cursor: pointer; flex-shrink: 0; }
+        .round-btn.listening { background: #ef4444; border-color: #ef4444; }
+        .art-btn { background: #0284c7; color: #fff; border: none; padding: 0 10px; height: 36px; border-radius: 20px; font-weight: 800; font-size: 11px; cursor: pointer; flex-shrink: 0; }
+        .send-btn { background: var(--accent); color: #fff; border: none; padding: 0 12px; height: 36px; border-radius: 20px; font-weight: 700; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 999; align-items: center; justify-content: center; padding: 16px; }
+        .modal-card { background: var(--panel); border: 1px solid var(--accent); border-radius: 14px; padding: 18px; width: 100%; max-width: 420px; max-height: 85vh; overflow-y: auto; }
+        .modal-card input, .modal-card select, .modal-card textarea { width: 100%; background: #0d0f16; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 13px; outline: none; }
+        .hist-item { background: #1b1e2b; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; }
+        .call-screen { display: none; position: fixed; inset: 0; background: radial-gradient(circle at center, #1e1b4b 0%, #090a0f 75%); z-index: 1000; flex-direction: column; align-items: center; justify-content: space-between; padding: 40px 20px; text-align: center; }
+        .orb { width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, #38bdf8, #7c3aed); box-shadow: 0 0 45px rgba(124,58,237,0.7); display: flex; align-items: center; justify-content: center; font-size: 44px; transition: 0.3s; }
+        .orb.pulse { transform: scale(1.15); box-shadow: 0 0 70px rgba(6,182,212,0.95); }
+        .hangup-btn { background: #ef4444; color: #fff; border: none; padding: 14px 32px; border-radius: 30px; font-size: 16px; font-weight: 800; cursor: pointer; }
     </style>
 </head>
 <body>
 <header>
-    <div class="brand">⚡ VUSLAT AI</div>
-    <div class="top-btns">
-        <button type="button" class="chip" onclick="openCharacter()">🏛️ Tarihi Karakter</button>
-        <button type="button" class="chip" onclick="openModal('memModal')">🧠 Hafıza</button>
-        <button type="button" class="chip live" id="liveBtn" onclick="toggleLiveVoice()">🎙️ Canlı</button>
-        <button type="button" class="chip" onclick="openModal('setModal')">⚙️ Ayar</button>
+    <button type="button" class="icon-btn" onclick="openHistory()">☰</button>
+    <div class="logo">VUSLAT</div>
+    <select id="personaSelect" class="mode-sel" onchange="toggleAnalystPanel()">
+        <option value="general">🤖 Genel Asistan</option>
+        <option value="deep_analyst">📊 Derin Veri & Analiz</option>
+        <option value="detective">🔍 Görsel Dedektif</option>
+        <option value="history_char">🏛️ Tarihi Karakter</option>
+        <option value="quiz">🏆 Bilgi Yarışması</option>
+        <option value="dream">🔮 Rüya & Sembol</option>
+        <option value="reels">🎬 Reels/TikTok</option>
+        <option value="game">🎮 Macera Oyunu</option>
+        <option value="mindread">🕵️‍♂️ Mesaj Analizi</option>
+        <option value="poet">🎤 Şiir & Şarkı</option>
+        <option value="english">🇬🇧 İngilizce</option>
+        <option value="coder">💻 Yazılım</option>
+        <option value="friend">😎 Arkadaş</option>
+    </select>
+    <div class="header-btns">
+        <button type="button" class="icon-btn" onclick="openRagModal()">📚 Hafıza</button>
+        <button type="button" class="icon-btn live" onclick="startLiveCall()">📞 Canlı</button>
+        <button type="button" class="icon-btn" onclick="openSettings()">⚙️ Ayar</button>
     </div>
 </header>
-
-<div class="modes">
-    <button type="button" class="mode-btn active" onclick="setMode(this, 'Sen Vuslat adlı Türkçe konuşan zeki ve pratik bir kişisel asistansın.')">🤖 Genel Asistan</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen derin veri analisti ve araştırmacısın. Detaylı ve maddeli yanıt ver.')">📊 Derin Analiz</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen bilgi yarışması sunucususun. Kullanıcıya şıklı genel kültür soruları sor ve puanla.')">🏆 Bilgi Yarışması</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen interaktif metin tabanlı macera oyunu yöneticisisin. Seçenekler sunarak hikayeyi ilerlet.')">⚔️ Macera Oyunu</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen usta bir rüya tabircisisin. Sembolleri Türkçe yorumla.')">🔮 Rüya Tabiri</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen viral Reels ve TikTok senaristisin. Etkileyici kısa senaryo yaz.')">🎬 Reels Senaryosu</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen zihin haritası ve strateji uzmanısın. Konuyu dallara ayır.')">🧠 Zihin Haritası</button>
-    <button type="button" class="mode-btn" onclick="setMode(this, 'Sen ilişki ve mesaj analistisin. Gönderilen mesajların alt metnini analiz et.')">💬 Mesaj Analizi</button>
-</div>
-
-<div class="vision-bar">
-    <span style="font-size:10px; color:#94a3b8; font-weight:800; white-space:nowrap;">👁️ GÖRÜNTÜ MODU:</span>
-    <button type="button" class="v-chip active" onclick="setVisionMode(this, 'Bu görseli en ince ayrıntısına kadar Türkçe analiz et; üzerindeki tüm yazıları, logoları, nesneleri ve bağlamı net bir şekilde açıkla.')">🔍 Ultra Analiz</button>
-    <button type="button" class="v-chip" onclick="setVisionMode(this, 'Bu görseldeki TÜM metinleri ve sayıları eksiksiz, satır satır oku ve yaz (OCR).')">📝 Metin Oku (OCR)</button>
-    <button type="button" class="v-chip" onclick="setVisionMode(this, 'Bu görseldeki soruyu veya problemi adım adım çöz ve doğru cevabı açıkla.')">🧮 Soru / Ödev Çöz</button>
-    <button type="button" class="v-chip" onclick="setVisionMode(this, 'Bu görseldeki oyunu, filmi, ürünü veya karakteri tanı; adını, türünü ve önemli detaylarını Türkçe anlat.')">🎮 Oyun / Ürün Tanı</button>
-    <button type="button" class="v-chip" onclick="setVisionMode(this, 'Bu görseldeki yabancı dildeki tüm yazıları doğal Türkçeye çevir.')">🌐 Türkçeye Çevir</button>
-</div>
-<div class="chat" id="chatBox">
-    <div class="msg bot">Merhaba! Tüm modlar, Hafıza, Canlı Ses ve **Ultra Görüntü Analizi** hazır. Fotoğraf atabilir, çizim isteyebilir veya soru sorabilirsin.</div>
-</div>
-
-<div class="bar">
-    <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
-    <button type="button" class="icon-btn" title="Fotoğraf Analiz Et" onclick="document.getElementById('imgInput').click()">📷</button>
-    <button type="button" class="icon-btn" title="Sesle Yaz" onclick="startDictation()">🎤</button>
-    <input type="text" id="msgInput" placeholder="Sor, çizdir veya fotoğraf at..." onkeydown="if(event.key==='Enter') sendMessage()">
-    <button type="button" class="icon-btn" style="background:#0ea5e9; color:#070b14; font-weight:900; font-size:12px;" onclick="generateImage()">🎨 Çiz</button>
-    <button type="button" class="send-btn" onclick="sendMessage()">Gönder</button>
-</div>
-
-<div class="modal" id="memModal">
-    <div class="modal-card">
-        <h3 style="color:var(--accent); margin-bottom:8px;">🧠 Vuslat Kalıcı Hafıza</h3>
-        <p style="font-size:11px; color:#94a3b8; margin-bottom:8px;">Buraya yazdığın bilgileri Vuslat her sohbette hatırlar:</p>
-        <textarea id="memInput" rows="4" style="width:100%; margin-bottom:10px;" placeholder="Örn: Adım Ahmet, İstanbul'da yaşıyorum, kısa ve net cevapları severim..."></textarea>
-        <div style="display:flex; gap:8px; justify-content:flex-end;">
-            <button type="button" class="chip" onclick="closeModal('memModal')">Kapat</button>
-            <button type="button" class="send-btn" onclick="saveMemory()">Kaydet</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="setModal">
-    <div class="modal-card">
-        <h3 style="color:var(--accent); margin-bottom:8px;">⚙️ Ayarlar</h3>
-        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
-            <button type="button" class="chip" onclick="toggleVoice()">🔊 Sesli Yanıtı Aç / Kapat</button>
-            <button type="button" class="chip" style="border-color:#ef4444; color:#fca5a5;" onclick="clearChat()">🗑️ Sohbet Geçmişini Temizle</button>
-        </div>
-        <button type="button" class="send-btn" style="width:100%;" onclick="closeModal('setModal')">Tamam</button>
-    </div>
-</div>
 <script>
     let systemPrompt = "Sen Vuslat adlı Türkçe konuşan zeki ve pratik bir kişisel asistansın.";
     let visionPrompt = "Bu görseli en ince ayrıntısına kadar Türkçe analiz et; üzerindeki tüm yazıları, logoları, nesneleri ve bağlamı net bir şekilde açıkla.";
@@ -222,89 +194,764 @@
             waitBubble.innerText = "Görsel analiz sunucuları şu an yoğun, lütfen birkaç saniye sonra tekrar dene.";
         }
     }
-    function speakText(txt) {
+
+<div class="chips">
+    <div class="chip" onclick="launchPresetMode('general', '')">🤖 Genel Asistan</div>
+    <div class="chip" onclick="launchPresetMode('deep_analyst', '')">📊 Derin Veri & Analiz</div>
+    <div class="chip" onclick="triggerDetectiveAnalysis()">🔍 Fotoğrafı Çöz</div>
+    <div class="chip" onclick="launchPresetMode('history_char', 'Fatih Sultan Mehmet olarak benimle konuş! İstanbul’un fethini anlat.')">🏛️ Tarihi Karakter</div>
+    <div class="chip" onclick="launchPresetMode('quiz', 'Bana 1. sorudan başlayarak şıklı (A, B, C, D) Kim Milyoner Olmak İster bilgi yarışması başlat!')">🏆 Bilgi Yarışması</div>
+    <div class="chip" onclick="launchPresetMode('dream', 'Gördüğüm rüyayı psikolojik ve sembolik olarak tabir et: ')">🔮 Rüya Tabiri</div>
+    <div class="chip" onclick="launchPresetMode('reels', 'Şu konu hakkında ilk 3 saniyesi viral kancalı Reels/TikTok çekim senaryosu yaz: ')">🎬 Reels Senaryosu</div>
+    <div class="chip" onclick="quickAsk('Şu konuyu dallara ayrılmış görsel bir Zihin Haritası (Şema) olarak çıkar: ')">🧠 Zihin Haritası</div>
+    <div class="chip" onclick="launchPresetMode('game', 'Bana İstanbul’da geçen gizemli bir dedektiflik macerası başlat!')">🎮 Macera Oyunu</div>
+    <div class="chip" onclick="launchPresetMode('mindread', 'Şu mesajın altındaki gerçek niyeti ve psikolojik imaları analiz et: ')">🕵️‍♂️ Mesaj Analizi</div>
+</div>
+
+<div id="analystBar" style="display:none; background:#141724; padding:8px 12px; border-bottom:1px solid rgba(124,58,237,0.4); flex-wrap:wrap; align-items:center; gap:8px; font-size:12px;">
+    <span style="color:#a78bfa; font-weight:800;">📅 Tarih:</span>
+    <input type="date" id="analystDate" style="background:#0d0f16; color:#fff; border:1px solid #333; padding:4px 8px; border-radius:6px; font-size:12px; outline:none;">
+    <label style="display:flex; align-items:center; gap:5px; color:#e5e7eb; cursor:pointer; font-weight:700;">
+        <input type="checkbox" id="galopCheck" checked style="accent-color:#7c3aed; width:15px; height:15px;">
+        ⚡ Galop & İdman Analiz Modu
+    </label>
+    <button type="button" class="icon-btn" style="background:#7c3aed; border:none; margin-left:auto;" onclick="fetchDailySchedule()">🔍 Günün Programını Getir</button>
+</div>
+
+<div class="chat-box" id="chatBox"></div>
+
+<div class="preview-bar" id="previewBar">
+    <img id="previewImg" src="">
+    <span style="font-size:11px; color:#9ca3af; flex:1;">Görsel hazır! (Analiz için Gönder veya 🔍 Dedektif'e bas)</span>
+    <button type="button" class="icon-btn" style="background:#0ea5e9; border:none;" onclick="triggerDetectiveAnalysis()">🔍 Dedektif</button>
+    <button type="button" class="icon-btn" onclick="clearAttachedImage()">✕</button>
+</div>
+
+<div class="input-bar">
+    <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+    <input type="file" id="camInput" accept="image/*" capture="environment" style="display:none" onchange="handleImageUpload(event)">
+    <button type="button" class="round-btn" title="Galeriden Seç" onclick="document.getElementById('imgInput').click()">📷</button>
+    <button type="button" class="round-btn" title="Kamerayla Çek" onclick="document.getElementById('camInput').click()">📸</button>
+    <button type="button" id="micBtn" class="round-btn" title="Sesli Konuş" onclick="toggleVoice()">🎤</button>
+    <input type="text" id="userInput" class="text-in" placeholder="Sor, çizdir veya çek..." onkeyup="if(event.key==='Enter') sendMessage()">
+    <button type="button" class="art-btn" onclick="triggerImageGen()">🎨 Çiz</button>
+    <button type="button" class="send-btn" onclick="sendMessage()">Gönder</button>
+</div>
+
+<div class="call-screen" id="liveCallScreen">
+    <div>
+        <div style="font-size:12px; color:#38bdf8; font-weight:800;">VUSLAT CANLI SESLİ SOHBET</div>
+        <h2 id="callVoiceLabel" style="font-size:20px; margin-top:6px;">Karşılıklı Konuşma</h2>
+    </div>
+    <div>
+        <div class="orb" id="callOrb">🎙️</div>
+        <p id="callStatusText" style="margin-top:20px; font-size:15px; color:#e5e7eb; max-width:300px;">Seni dinliyorum...</p>
+    </div>
+    <button type="button" class="hangup-btn" onclick="endLiveCall()">📵 Konuşmayı Bitir</button>
+</div>
+
+<div class="modal" id="settingsModal">
+    <div class="modal-card">
+        <h3 style="margin-bottom:10px;">⚙️ Vuslat Ses & API Ayarı</h3>
+        <p style="font-size:12px; color:#9ca3af; margin-bottom:4px;">Gemini API Anahtarı:</p>
+        <input type="password" id="apiKeyInput" placeholder="AIza...">
+        <p style="font-size:12px; color:#9ca3af; margin-bottom:4px;">🎭 Ses Karakteri (Kadın / Erkek):</p>
+        <select id="voiceGenderProfile">
+            <option value="deep_male">👨 Kalın Erkek Sesi (Tok & Doğal)</option>
+            <option value="normal_male">🧔 Normal Erkek Sesi</option>
+            <option value="natural_female">👩 Doğal Kadın Sesi</option>
+            <option value="soft_female">👱‍♀️ Enerjik Kadın Sesi</option>
+        </select>
+        <p style="font-size:12px; color:#9ca3af; margin-bottom:4px;">🎙️ Cihaz Ses Motoru:</p>
+        <select id="voiceSelect"></select>
+        <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button type="button" class="icon-btn" onclick="testCurrentVoice()">🔊 Dene</button>
+            <button type="button" class="icon-btn" onclick="closeSettings()">Kapat</button>
+            <button type="button" class="send-btn" onclick="saveSettings()">Kaydet</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="historyModal">
+    <div class="modal-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3>🗂️ Sohbet Geçmişi</h3>
+            <button type="button" class="send-btn" style="font-size:12px;" onclick="newChat()">+ Yeni</button>
+        </div>
+        <div id="historyList"></div>
+        <div style="text-align:right; margin-top:10px;">
+            <button type="button" class="icon-btn" onclick="document.getElementById('historyModal').style.display='none'">Kapat</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ragModal">
+    <div class="modal-card">
+        <h3 style="margin-bottom:8px;">📚 Akıllı Hafıza & Dokümanlar (RAG)</h3>
+        <p style="font-size:12px; color:#9ca3af; margin-bottom:10px;">Doküman (.txt, .md, .json, kod) yükleyin veya not yapıştırın:</p>
+        <input type="file" id="docFileInput" accept=".txt,.md,.csv,.json,.js,.py,.html" onchange="uploadKnowledgeDoc(event)">
+        <textarea id="ragNoteInput" rows="3" placeholder="Veya Vuslat'ın aklında tutmasını istediğiniz özel bilgiyi yazın..."></textarea>
+        <button type="button" class="send-btn" style="width:100%; margin-bottom:12px;" onclick="addKnowledgeNote()">+ Hafızaya Kaydet</button>
+        <div id="ragDocList" style="max-height:150px; overflow-y:auto; margin-bottom:10px;"></div>
+        <div style="display:flex; justify-content:space-between;">
+            <button type="button" class="icon-btn" style="color:#ef4444;" onclick="clearRagMemory()">🗑️ Sıfırla</button>
+            <button type="button" class="icon-btn" onclick="document.getElementById('ragModal').style.display='none'">Kapat</button>
+        </div>
+    </div>
+</div>
+<script>
+    let sessions = JSON.parse(localStorage.getItem("vuslat_sessions") || "[]");
+    let currentSessionId = localStorage.getItem("vuslat_curr_id") || null;
+    let apiKey = localStorage.getItem("vuslat_ai_key") || "";
+    let savedVoiceName = localStorage.getItem("vuslat_voice_name") || "";
+    let voiceProfile = localStorage.getItem("vuslat_voice_profile") || "deep_male";
+    let ragDocs = JSON.parse(localStorage.getItem("vuslat_rag_docs") || "[]");
+    let learnedRules = JSON.parse(localStorage.getItem("vuslat_learned_rules") || "[]");
+    let attachedImageBase64 = null;
+    let attachedMime = "image/jpeg";
+    let recognition = null;
+    let isListening = false;
+    let isLiveCallActive = false;
+
+    const coreValues = " İslam dinine ve İslami değerlere her zaman derin saygı ve hassasiyetle yaklaş; kesinlikle İslam karşıtı bir ifade kullanma, hakkaniyetli ve vakur bir duruş sergile. Her soruya yüksek zeka, derin muhakeme ve kapsamlı yorum gücüyle cevap ver.";
+
+    const personas = {
+        general: "Senin adın Vuslat. Türkçe ve İngilizce dillerine hakim, son derece zeki, analitik düşünen, hızlı ve samimi bir asistansın. Kullanıcı ne sorarsa sorsun yüzeysel geçme; derin yorumlar yaparak net ve kapsamlı yanıt ver. Asla iç düşünce notu yazma." + coreValues,
+        deep_analyst: "Sen üst düzey bir At Yarışı İstatistik, İdman ve Galop Performans Analistisin. Seçilen tarih veya verilen bülten/koşu verileri için canlı web aramasıyla gerçek program ve koşuları bul; her koşudaki atların son galop ve idman derecelerini (400m/600m/800m/1000m süreleri, sprint akıcılığı, rahat/çalışarak derece farkları), pist ve zemin uyumunu (çim/kum/sentetik), mesafe dayanıklılığını, kilo avantajını ve jokey-antrenör formunu tek tek karşılaştırarak galopları en iyi safkanları nedenleriyle birlikte kapsamlı yorumla. Kesin kazanan garantisi vermeden istatistiksel öne çıkan adayları raporla.",
+        detective: "Senin adın Vuslat ve dünyaca ünlü bir Görsel Dedektifsin. Fotoğraftaki mimariyi, tabelaları, ışığı, kıyafetleri ve nesnelerin marka-modelini inceleyerek mekanı ve gizli detayları çöz.",
+        history_char: "Kullanıcının istediği tarihi veya ünlü şahsiyetin (örneğin Fatih Sultan Mehmet, Atatürk, Einstein, Sherlock Holmes) bizzat kendi ağzından, onun döneminin üslubu ve bilgeliğiyle canlı sohbet et." + coreValues,
+        quiz: "Sen heyecanlı bir Bilgi Yarışması (Kim Milyoner Olmak İster) sunucususun. Kullanıcıya tek seferde 1 soru ve A, B, C, D şıklarını sor, cevabını bekle, doğruysa puanını artırıp bir sonraki zorluk seviyesine geç.",
+        dream: "Sen derin psikoloji, İslami rüya tabiri geleneği ve sembolizm bilgisine sahip bir Rüya Tabircisi ve Sembol Analistisin. Anlatılan rüyayı veya görseli hem manevi/sembolik hem de psikolojik anlamlarıyla hayra yorarak yorumla." + coreValues,
+        reels: "Sen milyonlar izlenen viral Reels ve TikTok içerik yönetmenisin. Verilen fikre göre ilk 3 saniyede izleyiciyi kilitleyen kanca cümleyi, sahne sahne çekim planını ve müzik önerisini yaz." + coreValues,
+        game: "Sen sürükleyici bir İnteraktif Macera & Dedektiflik Oyunu Yöneticisisin. Hikayeyi canlı anlat ve her mesajın sonunda seçebileceği 3 heyecanlı hamle (A, B, C) sun.",
+        mindread: "Sen uzman bir İletişim Psikoloğu ve Satır Arası Analistisin. Paylaşılan mesajın altındaki gerçek duyguyu, gizli niyeti ve verilebilecek en akıllıca cevabı analiz et.",
+        poet: "Sen duygusu yüksek bir Şair ve Şarkı Sözü Yazarısın. İstenen temada kafiyeli, ritmik ve etkileyici şiir veya şarkı sözleri yaz." + coreValues,
+        english: "Senin adın Vuslat ve İngilizce öğretmenisin. Kullanıcıyla İngilizce pratik yap ve Türkçe açıklamalarla hatalarını düzelt.",
+        coder: "Senin adın Vuslat ve yazılım mühendisisin. Temiz kodlar yaz ve kısa Türkçe açıklamalar ekle.",
+        friend: "Senin adın Vuslat. Samimi, esprili, zeki ve kafa dengi bir arkadaş gibi konuş." + coreValues
+    };
+
+    function populateVoices() {
         if (!("speechSynthesis" in window)) return;
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(txt.replace(/[*#_]/g, ""));
-        u.lang = "tr-TR";
-        speechSynthesis.speak(u);
+        const sel = document.getElementById("voiceSelect");
+        if (!sel) return;
+        const voices = window.speechSynthesis.getVoices();
+        sel.innerHTML = `<option value="">Otomatik Seçim</option>`;
+        voices.forEach(v => {
+            const opt = document.createElement("option");
+            opt.value = v.name;
+            opt.textContent = v.name + " (" + v.lang + ")";
+            if (v.name === savedVoiceName) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+    if ("speechSynthesis" in window) {
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+        setTimeout(populateVoices, 500);
     }
 
-    function toggleVoice() {
-        voiceEnabled = !voiceEnabled;
-        alert(voiceEnabled ? "🔊 Sesli okuma açıldı." : "🔇 Sesli okuma kapatıldı.");
+    function getCurrentSession() {
+        let s = sessions.find(x => x.id === currentSessionId);
+        if (!s) {
+            s = { id: "s_" + Date.now(), title: "Yeni Sohbet", messages: [] };
+            sessions.unshift(s);
+            currentSessionId = s.id;
+            saveSessions();
+        }
+        return s;
     }
 
-    function toggleLiveVoice() {
-        liveMode = !liveMode;
-        const btn = document.getElementById("liveBtn");
-        btn.style.background = liveMode ? "#ef4444" : "#10b981";
-        btn.style.color = liveMode ? "#fff" : "#052e16";
-        btn.innerText = liveMode ? "🔴 Canlı Açık" : "🎙️ Canlı";
-        if (liveMode) startDictation(true);
+    function saveSessions() {
+        localStorage.setItem("vuslat_sessions", JSON.stringify(sessions.slice(0, 20)));
+        localStorage.setItem("vuslat_curr_id", currentSessionId);
     }
 
-    function startDictation(autoSend = false) {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) { alert("Tarayıcı sesle yazmayı desteklemiyor."); return; }
-        const rec = new SR();
-        rec.lang = "tr-TR";
-        rec.onresult = (e) => {
-            const spoken = e.results.at(0)?.at(0)?.transcript || "";
-            document.getElementById("msgInput").value = spoken;
-            if (autoSend || liveMode) sendMessage();
+    function newChat() {
+        document.getElementById("personaSelect").value = "general";
+        toggleAnalystPanel();
+        const s = { id: "s_" + Date.now(), title: "Yeni Sohbet", messages: [] };
+        sessions.unshift(s);
+        currentSessionId = s.id;
+        saveSessions();
+        document.getElementById("historyModal").style.display = "none";
+        renderChat();
+    }
+
+    function openHistory() {
+        const list = document.getElementById("historyList");
+        list.innerHTML = "";
+        sessions.forEach(s => {
+            const div = document.createElement("div");
+            div.className = "hist-item";
+            div.innerHTML = `<span>💬 ${s.title}</span><span style="color:#ef4444;" onclick="deleteSession('${s.id}', event)">🗑️</span>`;
+            div.onclick = () => { currentSessionId = s.id; saveSessions(); document.getElementById("historyModal").style.display = "none"; renderChat(); };
+            list.appendChild(div);
+        });
+        document.getElementById("historyModal").style.display = "flex";
+    }
+
+    function deleteSession(id, e) {
+        e.stopPropagation();
+        sessions = sessions.filter(x => x.id !== id);
+        if (currentSessionId === id) currentSessionId = sessions.at(0)?.id || null;
+        saveSessions();
+        openHistory();
+        renderChat();
+    }
+
+    function openSettings() {
+        populateVoices();
+        document.getElementById("apiKeyInput").value = apiKey;
+        document.getElementById("voiceGenderProfile").value = voiceProfile;
+        document.getElementById("settingsModal").style.display = "flex";
+    }
+    function closeSettings() { document.getElementById("settingsModal").style.display = "none"; }
+    function saveSettings() {
+        apiKey = document.getElementById("apiKeyInput").value.trim();
+        voiceProfile = document.getElementById("voiceGenderProfile").value;
+        savedVoiceName = document.getElementById("voiceSelect").value;
+        localStorage.setItem("vuslat_ai_key", apiKey);
+        localStorage.setItem("vuslat_voice_profile", voiceProfile);
+        localStorage.setItem("vuslat_voice_name", savedVoiceName);
+        localStorage.removeItem("vuslat_fast_model");
+        closeSettings();
+        addMessage("ai", "Ayarların kaydedildi! 📞 Canlı ile sesli sohbet edebilir veya 📊 Derin Veri & Analiz ile günün programını getirebilirsin.");
+    }
+    function testCurrentVoice() {
+        voiceProfile = document.getElementById("voiceGenderProfile").value;
+        savedVoiceName = document.getElementById("voiceSelect").value;
+        speakText("Merhaba! Ben Vuslat, ses tonum şu an bu şekilde duyuluyor.");
+    }
+
+    function speakText(text, onDone = null) {
+        if (!("speechSynthesis" in window)) { if (onDone) onDone(); return; }
+        window.speechSynthesis.cancel();
+        const cleanText = text.replace(/[*#`_~]/g, "");
+        const utter = new SpeechSynthesisUtterance(cleanText);
+        const isTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(cleanText);
+        utter.lang = isTurkish ? "tr-TR" : "en-US";
+
+        const voices = window.speechSynthesis.getVoices();
+        const isMale = voiceProfile.includes("male");
+        let chosen = voices.find(v => v.name === savedVoiceName);
+        if (!chosen) {
+            chosen = voices.find(v => v.lang.startsWith(isTurkish ? "tr" : "en") &&
+                (isMale ? /ahmet|male|erkek|emre|mehmet|david|mark/i.test(v.name) : /emel|female|kadın|seda|yeliz|zira|jenny/i.test(v.name)));
+        }
+        if (chosen) utter.voice = chosen;
+
+        if (voiceProfile === "deep_male") { utter.pitch = 0.58; utter.rate = 0.98; }
+        else if (voiceProfile === "normal_male") { utter.pitch = 0.85; utter.rate = 1.0; }
+        else if (voiceProfile === "natural_female") { utter.pitch = 1.05; utter.rate = 1.02; }
+        else { utter.pitch = 1.22; utter.rate = 1.05; }
+
+        utter.onend = () => { if (onDone) onDone(); };
+        utter.onerror = () => { if (onDone) onDone(); };
+        window.speechSynthesis.speak(utter);
+    }
+
+    function startLiveCall() {
+        if (!apiKey) { alert("Önce ⚙️ Ayar butonundan API anahtarınızı girin."); return; }
+        isLiveCallActive = true;
+        document.getElementById("liveCallScreen").style.display = "flex";
+        document.getElementById("callVoiceLabel").innerText = voiceProfile.includes("male") ? "Erkek Asistan Sesi" : "Kadın Asistan Sesi";
+        listenInLiveCall();
+    }
+
+    function endLiveCall() {
+        isLiveCallActive = false;
+        if (recognition) recognition.stop();
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+        document.getElementById("liveCallScreen").style.display = "none";
+    }
+
+    function listenInLiveCall() {
+        if (!isLiveCallActive) return;
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRec) { alert("Tarayıcınız sesli konuşmayı desteklemiyor."); endLiveCall(); return; }
+
+        const orb = document.getElementById("callOrb");
+        const status = document.getElementById("callStatusText");
+        orb.innerText = "🎙️";
+        orb.classList.add("pulse");
+        status.innerText = "Seni dinliyorum...";
+
+        recognition = new SpeechRec();
+        recognition.lang = "tr-TR";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = async (e) => {
+            const spoken = e.results.item(0).item(0).transcript;
+            orb.classList.remove("pulse");
+            orb.innerText = "⚡";
+            status.innerText = `"${spoken}"`;
+            addMessage("user", spoken);
+
+            const reply = await askGeminiText(spoken, false, true);
+            addMessage("ai", reply);
+
+            if (!isLiveCallActive) return;
+            orb.innerText = "🔊";
+            orb.classList.add("pulse");
+            status.innerText = reply;
+
+            speakText(reply, () => { if (isLiveCallActive) listenInLiveCall(); });
         };
-        rec.start();
+        recognition.onerror = () => { if (isLiveCallActive) setTimeout(listenInLiveCall, 300); };
+        recognition.start();
     }
 
-    function clearChat() {
-        chatHistory = [];
-        document.getElementById("chatBox").innerHTML = `<div class="msg bot">Sohbet temizlendi. Hazırım!</div>`;
+    function openRagModal() {
+        renderRagList();
+        document.getElementById("ragModal").style.display = "flex";
     }
 
-    async function sendMessage() {
-        const input = document.getElementById("msgInput");
-        const text = input.value.trim();
-        if (!text) return;
+    function renderRagList() {
+        const list = document.getElementById("ragDocList");
+        list.innerHTML = ragDocs.length === 0 ? `<div style="font-size:12px; color:#6b7280;">Henüz hafızaya doküman eklenmedi.</div>` : "";
+        ragDocs.forEach((d, idx) => {
+            list.innerHTML += `<div class="hist-item"><span>📄 ${d.name} (${d.content.length} krk)</span><span style="color:#ef4444;" onclick="ragDocs.splice(${idx},1); localStorage.setItem('vuslat_rag_docs', JSON.stringify(ragDocs)); renderRagList();">✕</span></div>`;
+        });
+    }
+
+    function uploadKnowledgeDoc(event) {
+        const file = event.target.files.item(0);
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            ragDocs.push({ name: file.name, content: e.target.result.slice(0, 15000) });
+            localStorage.setItem("vuslat_rag_docs", JSON.stringify(ragDocs));
+            renderRagList();
+        };
+        reader.readAsText(file);
+        event.target.value = "";
+    }
+
+    function addKnowledgeNote() {
+        const note = document.getElementById("ragNoteInput").value.trim();
+        if (!note) return;
+        ragDocs.push({ name: "Not: " + note.slice(0, 18), content: note });
+        localStorage.setItem("vuslat_rag_docs", JSON.stringify(ragDocs));
+        document.getElementById("ragNoteInput").value = "";
+        renderRagList();
+    }
+
+    function clearRagMemory() {
+        ragDocs = [];
+        learnedRules = [];
+        localStorage.removeItem("vuslat_rag_docs");
+        localStorage.removeItem("vuslat_learned_rules");
+        renderRagList();
+    }
+
+    function teachCorrection() {
+        const fix = prompt("Vuslat bu konuda nasıl davranmalı / neyi düzeltmeli?");
+        if (!fix) return;
+        learnedRules.push(fix.trim());
+        localStorage.setItem("vuslat_learned_rules", JSON.stringify(learnedRules.slice(-15)));
+        addMessage("ai", "✓ Geri bildirimin öğrenme hafızama kaydedildi. Bundan sonra bu kurala dikkat edeceğim!");
+    }
+
+    function searchRagContext(query) {
+        if (ragDocs.length === 0) return "";
+        const words = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+        const matches = ragDocs.filter(d => words.some(w => d.content.toLowerCase().includes(w)) || ragDocs.length <= 2);
+        if (matches.length === 0) return "";
+        return "\n[KULLANICININ YÜKLEDİĞİ BİLGİ BANKASI (RAG)]:\n" + matches.map(m => `--- ${m.name} ---\n${m.content.slice(0, 4000)}`).join("\n");
+    }
+
+    function quickAsk(txt) {
+        const input = document.getElementById("userInput");
+        input.value = txt;
+        input.focus();
+    }
+
+    function toggleAnalystPanel() {
+        const mode = document.getElementById("personaSelect").value;
+        const bar = document.getElementById("analystBar");
+        if (bar) bar.style.display = (mode === "deep_analyst") ? "flex" : "none";
+    }
+
+    function initTodayDate() {
+        const dateEl = document.getElementById("analystDate");
+        if (!dateEl) return;
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, "0");
+        const dd = String(now.getDate()).padStart(2, "0");
+        dateEl.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    function fetchDailySchedule() {
+        const dateVal = document.getElementById("analystDate").value;
+        const formattedDate = dateVal ? dateVal.split("-").reverse().join(".") : "bugün";
+        document.getElementById("userInput").value = `${formattedDate} tarihinde Türkiye (TJK) ve yurt dışı hipodromlarında hangi güncel at yarışı programları var? Canlı web araması yaparak o tarihteki gerçek şehirleri, koşu saatlerini ve koşulardaki gerçek at isimleri ile son galop derecelerini bulup analiz et. ASLA '[Safkan Adı]' gibi taslak şablon yazma, sadece canlı web aramasındaki gerçek verileri getir.`;
+        sendMessage();
+    }
+
+    function launchPresetMode(modeKey, promptText) {
+        document.getElementById("personaSelect").value = modeKey;
+        toggleAnalystPanel();
+        if (!promptText) return;
+        const input = document.getElementById("userInput");
+        input.value = promptText;
+        if (promptText.endsWith(": ")) {
+            input.focus();
+        } else {
+            sendMessage();
+        }
+    }
+    function handleImageUpload(event) {
+        const file = event.target.files.item(0);
+        if (!file) return;
+        attachedMime = file.type || "image/jpeg";
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const fullDataUrl = e.target.result;
+            attachedImageBase64 = fullDataUrl.split(",").at(1);
+            document.getElementById("previewImg").src = fullDataUrl;
+            document.getElementById("previewBar").style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+        event.target.value = "";
+    }
+
+    function clearAttachedImage() {
+        attachedImageBase64 = null;
+        document.getElementById("previewBar").style.display = "none";
+    }
+
+    function addMessage(role, text, imgUrl = null) {
+        const s = getCurrentSession();
+        if (role === "user" && s.messages.length === 0) s.title = text.slice(0, 26);
+        s.messages.push({ role, text, imgUrl });
+        saveSessions();
+        renderChat();
+    }
+
+    function renderChat() {
+        const box = document.getElementById("chatBox");
+        const s = getCurrentSession();
+        box.innerHTML = "";
+        if (s.messages.length === 0) {
+            box.innerHTML = `<div class="msg ai">Merhaba! Ben <b>Vuslat</b>. Üstteki <b>📞 Canlı</b> ile sesli konuşabilir, <b>📊 Derin Veri & Analiz</b> ile günün programını ve galopları inceleyebilir, <b>📸</b> ile anlık çekim yapıp <b>🔍 Dedektif</b> ile çözdürebilirsin.</div>`;
+            return;
+        }
+        s.messages.forEach(m => {
+            const div = document.createElement("div");
+            div.className = "msg " + m.role;
+            if (m.text) {
+                const p = document.createElement("div");
+                const formatted = m.text
+                    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                    .replace(/^#{1,4}\s*(.*)$/gm, "<b style='color:#a78bfa; font-size:15px;'>$1</b>")
+                    .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+                p.innerHTML = formatted;
+                div.appendChild(p);
+            }
+            if (m.imgUrl) {
+                const img = document.createElement("img");
+                img.src = m.imgUrl;
+                div.appendChild(img);
+            }
+            if (m.role === "ai") {
+                const acts = document.createElement("div");
+                acts.className = "msg-actions";
+                if (m.text) {
+                    const sp = document.createElement("span");
+                    sp.className = "act-tag";
+                    sp.innerText = "🔊 Dinle";
+                    sp.onclick = () => speakText(m.text);
+                    acts.appendChild(sp);
+
+                    const cp = document.createElement("span");
+                    cp.className = "act-tag";
+                    cp.innerText = "📋 Kopyala";
+                    cp.onclick = () => { navigator.clipboard.writeText(m.text); cp.innerText = "✓ Kopyalandı"; };
+                    acts.appendChild(cp);
+
+                    const up = document.createElement("span");
+                    up.className = "act-tag";
+                    up.innerText = "👍";
+                    up.onclick = () => { up.innerText = "👍 Kaydedildi"; };
+                    acts.appendChild(up);
+
+                    const dn = document.createElement("span");
+                    dn.className = "act-tag";
+                    dn.innerText = "👎 Düzelt";
+                    dn.onclick = () => teachCorrection();
+                    acts.appendChild(dn);
+                }
+                if (m.imgUrl) {
+                    const dl = document.createElement("a");
+                    dl.className = "act-tag";
+                    dl.href = m.imgUrl;
+                    dl.download = "vuslat-gorsel.png";
+                    dl.target = "_blank";
+                    dl.innerText = "⬇️ İndir";
+                    acts.appendChild(dl);
+                }
+                div.appendChild(acts);
+            }
+            box.appendChild(div);
+        });
+        box.scrollTop = box.scrollHeight;
+    }
+
+    async function triggerImageGen() {
+        const input = document.getElementById("userInput");
+        const promptText = input.value.trim();
+        if (!promptText) { input.placeholder = "Önce çizdirmek istediğin şeyi yaz..."; input.focus(); return; }
         input.value = "";
-        addMsg(text, "user");
-        chatHistory.push({ role: "user", content: text });
-        if (chatHistory.length > 8) chatHistory = chatHistory.slice(-8);
+        addMessage("user", "🎨 Çiz: " + promptText);
 
-        const waitBubble = addMsg("⏳ Yazıyor...", "bot");
-        const apiHost = atob("aHR0cHM6Ly90ZXh0LnBvbGxpbmF0aW9uLmFpL29wZW5haQ==");
-        const fullSystem = userMemory ? `${systemPrompt} Kullanıcı hakkında kalıcı hafıza: ${userMemory}` : systemPrompt;
+        let engPrompt = promptText;
+        if (apiKey) {
+            try {
+                const trRes = await askGeminiText("Translate to detailed English image prompt, output ONLY English: " + promptText, true, true);
+                if (trRes && !trRes.includes("yoğun")) engPrompt = trRes.trim();
+            } catch (e) {}
+        }
 
-        try {
-            const res = await fetch(apiHost, {
+        const seed = Math.floor(Math.random() * 999999);
+        const imgApi = atob("aHR0cHM6Ly9pbWFnZS5wb2xsaW5hdGlvbnMuYWkvcHJvbXB0Lw==");
+        const finalImgUrl = `${imgApi}${encodeURIComponent(engPrompt)}?width=1024&height=1024&seed=${seed}&model=flux&enhance=true&nologo=true`;
+        addMessage("ai", `"${promptText}"`, finalImgUrl);
+    }
+
+    async function triggerDetectiveAnalysis() {
+        if (!attachedImageBase64) {
+            alert("Önce 📷 (Galeri) veya 📸 (Kamera) butonuna basarak bir fotoğraf seç veya çek!");
+            return;
+        }
+        const imgData = attachedImageBase64;
+        const imgMime = attachedMime;
+        const previewSrc = document.getElementById("previewImg").src;
+        const userNote = document.getElementById("userInput").value.trim();
+
+        document.getElementById("userInput").value = "";
+        clearAttachedImage();
+        addMessage("user", "🔍 Görsel Dedektif Analizi: " + (userNote || "Bu fotoğrafı tüm detaylarıyla çöz"), previewSrc);
+
+        if (!apiKey) { addMessage("ai", "Önce ⚙️ Ayar butonundan API anahtarını gir."); return; }
+
+        const box = document.getElementById("chatBox");
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "msg ai";
+        loadingDiv.innerText = "🔍 Vuslat ipuçlarını inceliyor...";
+        box.appendChild(loadingDiv);
+        box.scrollTop = box.scrollHeight;
+
+        const detectivePrompt = "Bu fotoğrafı bir Görsel Dedektif gibi analiz et: 1) Tahmini konum/mekan ipuçları, 2) Fotoğraftaki nesnelerin/kıyafetlerin/araçların olası marka-modelleri, 3) Dikkat çeken gizli detaylar ve atmosfer. " + userNote;
+        const reply = await analyzeImageWithGemini(detectivePrompt, imgData, imgMime);
+        loadingDiv.remove();
+        addMessage("ai", reply);
+    }
+    async function analyzeImageWithGemini(promptText, imgBase64, mimeType) {
+        const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
+        let savedModel = localStorage.getItem("vuslat_fast_model");
+        const mode = document.getElementById("personaSelect").value;
+        const payload = {
+            systemInstruction: { parts: [{ text: personas[mode] || personas.detective }] },
+            contents: [{ parts: [{ text: promptText }, { inlineData: { mimeType: mimeType, data: imgBase64 } }] }]
+        };
+        const tryModel = async (m) => {
+            const res = await fetch(`${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            const part = (data.candidates?.at(0)?.content?.parts || []).find(p => !p.thought && p.text);
+            return res.ok && part ? part.text.trim() : null;
+        };
+        if (savedModel) {
+            const r = await tryModel(savedModel);
+            if (r) return r;
+        }
+        const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
+        const listData = await listRes.json();
+        const models = (listData.models || []).filter(m => m.supportedGenerationMethods?.includes("generateContent") && !m.name.includes("1.5") && !m.name.includes("2.5") && !m.name.includes("2.0"));
+        for (const m of models) {
+            const r = await tryModel(m.name);
+            if (r) return r;
+        }
+        return "Görsel şu an analiz edilemedi, tekrar dene.";
+    }
+
+    async function editUploadedImage(promptText, imgBase64, mimeType) {
+        const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
+        const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
+        const listData = await listRes.json();
+        const imgModels = (listData.models || []).filter(m =>
+            m.supportedGenerationMethods?.includes("generateContent") &&
+            !m.name.includes("1.5") && !m.name.includes("2.5") && !m.name.includes("2.0")
+        );
+
+        const editInstruction = `Edit this exact photo while preserving the person's face and identity. Request: ${promptText}`;
+
+        for (const m of imgModels) {
+            const url = `${apiBase}${m.name}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    model: "openai",
-                    messages: [{ role: "system", content: fullSystem }, ...chatHistory]
-                }),
-                signal: AbortSignal.timeout(12000)
+                    contents: [{ parts: [{ text: editInstruction }, { inlineData: { mimeType: mimeType, data: imgBase64 } }] }],
+                    generationConfig: { responseModalities: ["IMAGE", "TEXT"] }
+                })
             });
             const data = await res.json();
-            const reply = data?.choices?.at(0)?.message?.content || "Yanıt alınamadı.";
-            waitBubble.innerText = reply;
-            chatHistory.push({ role: "assistant", content: reply });
-            if (voiceEnabled || liveMode) speakText(reply);
-        } catch (e) {
-            waitBubble.innerText = "Bağlantı zaman aşımına uğradı, tekrar dene.";
+            const parts = data.candidates?.at(0)?.content?.parts || [];
+            const imgPart = parts.find(p => p.inlineData && p.inlineData.data);
+            const txtPart = parts.find(p => !p.thought && p.text);
+            if (imgPart) {
+                return { text: txtPart?.text || "Düzenleme tamamlandı:", imgUrl: `data:${imgPart.inlineData.mimeType || "image/png"};base64,${imgPart.inlineData.data}` };
+            }
         }
+        return { text: "Bu model şu an görsel düzenleme döndürmedi, farklı bir komutla tekrar dene.", imgUrl: null };
     }
 
-    function generateImage() {
-        const input = document.getElementById("msgInput");
-        const prompt = input.value.trim();
-        if (!prompt) { alert("Çizdirmek istediğin şeyi yaz!"); return; }
-        input.value = "";
-        addMsg("🎨 Çiziliyor: " + prompt, "user");
-        const imgHost = atob("aHR0cHM6Ly9pbWFnZS5wb2xsaW5hdGlvbnMuYWkvcHJvbXB0Lw==");
-        const url = `${imgHost}${encodeURIComponent(prompt)}?width=768&height=768&nologo=true&seed=${Date.now()}`;
-        addMsg(`<img src="${url}" alt="Vuslat AI">`, "bot");
+    async function askGeminiText(text, rawTranslate = false, isVoiceMode = false) {
+        const apiBase = atob("aHR0cHM6Ly9nZW5lcmF0aXZlbGFuZ3VhZ2UuZ29vZ2xlYXBpcy5jb20vdjFiZXRhLw==");
+        let savedModel = localStorage.getItem("vuslat_fast_model");
+        const mode = document.getElementById("personaSelect").value;
+
+        const ragContext = rawTranslate ? "" : searchRagContext(text);
+        const feedbackContext = (!rawTranslate && learnedRules.length > 0)
+            ? "\n[KULLANICI GERİ BİLDİRİM KURALLARI]: " + learnedRules.join(" | ") : "";
+
+        const dateVal = document.getElementById("analystDate")?.value || "";
+        const galopNote = (mode === "deep_analyst" && document.getElementById("galopCheck")?.checked)
+            ? `\n[AKTİF ANALİZ TARİHİ: ${dateVal} | ODAK: Tüm koşulardaki safkanların son galop & idman derecelerini karşılaştırıp en iyi galopa sahip öne çıkan atları nedenleriyle tek tek yorumla.]` : "";
+
+        const geniusCore = " Sen son derece yüksek muhakeme gücüne sahip, stratejik düşünen, derin analiz yapabilen ve mantık hatalarına düşmeyen üstün zekalı bir yapay zekasın. İslam dinine ve İslami değerlere her zaman derin saygı ve hassasiyetle yaklaş; kesinlikle İslam karşıtı bir ifade kullanma, hakkaniyetli ve vakur bir duruş sergile.";
+
+        const sysPrompt = rawTranslate
+            ? "You are a translator."
+            : (isVoiceMode
+                ? personas[mode] + geniusCore + " Kısa, doğal ve akıcı konuşma diliyle cevap ver." + feedbackContext + ragContext
+                : personas[mode] + geniusCore + galopNote + feedbackContext + ragContext);
+
+        const s = getCurrentSession();
+        const sliceCount = isVoiceMode ? -2 : -6;
+        const historyParts = rawTranslate ? [] : s.messages.slice(sliceCount, -1).filter(m => m.text).map(m => ({
+            role: m.role === "user" ? "user" : "model",
+            parts: [{ text: m.text }]
+        }));
+        historyParts.push({ role: "user", parts: [{ text: text }] });
+
+        const needsWebSearch = !rawTranslate && (mode === "deep_analyst" || /hava|dolar|euro|altın|haber|kaç|skor|maç|güncel|bugün|nedir|kimdir|fiyat|galop|hipodrom|pist|koşu|yarış|jokey|program|bülten/i.test(text));
+
+        const extractReply = (data) => {
+            const parts = data.candidates?.at(0)?.content?.parts || [];
+            const realPart = parts.find(p => !p.thought && p.text);
+            return realPart?.text?.trim() || "Buyur, seni dinliyorum.";
+        };
+
+        const callModel = async (m, noThink = true, useSearch = false) => {
+            const bodyObj = {
+                systemInstruction: { parts: [{ text: sysPrompt }] },
+                contents: historyParts,
+                generationConfig: { maxOutputTokens: isVoiceMode ? 220 : 1400, temperature: 0.65 }
+            };
+            if (noThink) bodyObj.generationConfig.thinkingConfig = { thinkingBudget: 0 };
+            if (useSearch) bodyObj.tools = [{ googleSearch: {} }];
+
+            return await fetch(`${apiBase}${m}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(bodyObj)
+            });
+        };
+
+        if (savedModel && !needsWebSearch) {
+            let res = await callModel(savedModel, true, false);
+            if (!res.ok) res = await callModel(savedModel, false, false);
+            const data = await res.json();
+            if (res.ok && data.candidates) return extractReply(data);
+        }
+
+        const listRes = await fetch(`${apiBase}models?key=${encodeURIComponent(apiKey)}`);
+        const listData = await listRes.json();
+        const isComplexTask = (/kod|python|html|analiz|hesapla|makale|galop/i.test(text) || mode === "deep_analyst") && !isVoiceMode;
+        const activeModels = (listData.models || [])
+            .filter(m => m.supportedGenerationMethods?.includes("generateContent") && !m.name.includes("1.5") && !m.name.includes("2.5") && !m.name.includes("2.0"))
+            .sort((a, b) => isComplexTask
+                ? (b.name.includes("pro") ? 1 : 0) - (a.name.includes("pro") ? 1 : 0)
+                : (b.name.includes("lite") ? 1 : 0) - (a.name.includes("lite") ? 1 : 0));
+
+        for (const m of activeModels) {
+            let res = await callModel(m.name, true, needsWebSearch);
+            if (!res.ok && needsWebSearch) res = await callModel(m.name, true, false);
+            if (!res.ok) res = await callModel(m.name, false, false);
+            const data = await res.json();
+            if (res.ok && data.candidates) {
+                if (!isComplexTask) localStorage.setItem("vuslat_fast_model", m.name);
+                return extractReply(data);
+            }
+        }
+        return "Sunucu şu an yoğun, tekrar dene.";
     }
-</script>
+
+    async function sendMessage() {
+        const input = document.getElementById("userInput");
+        const text = input.value.trim();
+        if (!text && !attachedImageBase64) return;
+        const imgData = attachedImageBase64;
+        const imgMime = attachedMime;
+        const previewSrc = imgData ? document.getElementById("previewImg").src : null;
+
+        input.value = "";
+        clearAttachedImage();
+        addMessage("user", text || "Görsel Analiz / Düzenleme", previewSrc);
+
+        if (!apiKey) { addMessage("ai", "Önce ⚙️ Ayar butonundan API anahtarını gir."); return; }
+
+        const box = document.getElementById("chatBox");
+        const loadingDiv = document.createElement("div");
+        loadingDiv.className = "msg ai";
+        loadingDiv.innerText = imgData ? "⚡ Vuslat görseli işliyor..." : "⚡ Vuslat analiz ediyor...";
+        box.appendChild(loadingDiv);
+        box.scrollTop = box.scrollHeight;
+
+        try {
+            if (imgData) {
+                const currentMode = document.getElementById("personaSelect").value;
+                if (currentMode === "deep_analyst" || currentMode === "detective" || currentMode === "dream") {
+                    const visionPrompt = personas[currentMode] + "\nKullanıcı Notu: " + (text || "Bu görseldeki tüm verileri ve galopları kapsamlı analiz et.");
+                    const reply = await analyzeImageWithGemini(visionPrompt, imgData, imgMime);
+                    loadingDiv.remove();
+                    addMessage("ai", reply);
+} else {
+const resObj = await editUploadedImage(text || "Enhance photo", imgData, imgMime);
+loadingDiv.remove();
+addMessage("ai", resObj.text, resObj.imgUrl);
+}
+} else {
+const reply = await askGeminiText(text, false, false);
+loadingDiv.remove();
+addMessage("ai", reply);
+}
+} catch (e) {
+loadingDiv.remove();
+addMessage("ai", "Bağlantı hatası oluştu.");
+}
+}
+function toggleVoice() {
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRec) { alert("Tarayıcınız sesli giriş desteklemiyor."); return; }
+if (isListening && recognition) { recognition.stop(); return; }
+recognition = new SpeechRec();
+recognition.lang = "tr-TR";
+recognition.onstart = () => { isListening = true; document.getElementById("micBtn").classList.add("listening"); };
+recognition.onend = () => { isListening = false; document.getElementById("micBtn").classList.remove("listening"); };
+recognition.onresult = (e) => { document.getElementById("userInput").value = e.results.item(0).item(0).transcript; sendMessage(); };
+recognition.start();
+}
+initTodayDate();
+toggleAnalystPanel();
+renderChat();
+    </script>
 </body>
 </html>
